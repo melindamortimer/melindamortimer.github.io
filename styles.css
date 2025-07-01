@@ -1,0 +1,430 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+:root {
+    --dark-bg: #1a1a2e;
+    --card-bg: #16213e;
+    --primary-accent: #0f3460;
+    --secondary-accent: #e94560;
+    --text-color: #f0f0f0;
+    --font-family: 'Roboto', sans-serif;
+    --stat-hp: #ff5959;
+    --stat-atk: #f5ac78;
+    --stat-def: #fae078;
+    --stat-spa: #9db7f5;
+    --stat-spd: #a7db8d;
+    --stat-speed: #fa92b2;
+
+    /* Pokémon Type Colors */
+    --type-normal: #A8A878;
+    --type-fire: #F08030;
+    --type-water: #6890F0;
+    --type-electric: #F8D030;
+    --type-grass: #78C850;
+    --type-ice: #98D8D8;
+    --type-fighting: #C03028;
+    --type-poison: #A040A0;
+    --type-ground: #E0C068;
+    --type-flying: #A890F0;
+    --type-psychic: #F85888;
+    --type-bug: #A8B820;
+    --type-rock: #B8A038;
+    --type-ghost: #705898;
+    --type-dragon: #7038F8;
+    --type-dark: #705848;
+    --type-steel: #B8B8D0;
+    --type-fairy: #EE99AC;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 2rem;
+}
+
+h1 {
+    text-align: center;
+    color: var(--secondary-accent);
+    margin-bottom: 2rem;
+    font-size: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.teams {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.team {
+    background-color: var(--card-bg);
+    border: 2px solid var(--primary-accent);
+    border-radius: 15px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.team h2 {
+    color: var(--secondary-accent);
+    border-bottom: 2px solid var(--primary-accent);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.winner-text {
+    color: #ffd700;
+    font-size: 1rem;
+    background-color: rgba(255, 215, 0, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    display: inline-block; /* Required for transform animations */
+}
+
+.team p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: rgba(0,0,0,0.2);
+    padding: 0.5rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+button {
+    background-color: var(--secondary-accent);
+    color: var(--text-color);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    width: 100%;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #d43d51;
+    transform: scale(1.02);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none; /* Prevents hover and click events */
+}
+
+.button-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.button-container button {
+    margin-bottom: 0;
+    flex-grow: 1;
+    width: auto;
+    padding: 0.8rem 0.5rem;
+}
+
+.randomise-btn {
+    background-color: #2a9d8f; /* Teal */
+}
+.randomise-btn:hover {
+    background-color: #264653;
+}
+
+.clear-btn {
+    background-color: var(--primary-accent);
+}
+.clear-btn:hover {
+    background-color: #1c4b82;
+}
+
+.manual-entry {
+    margin-top: 1rem;
+    border-top: 1px solid var(--primary-accent);
+    padding-top: 1rem;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.poke-input {
+    width: 100%;
+    padding: 0.7rem;
+    background-color: var(--primary-accent);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.poke-input::placeholder {
+    color: #a0a0a0;
+}
+
+.poke-input:focus {
+    outline: none;
+    border-color: var(--secondary-accent);
+}
+
+.poke-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.suggestions {
+    list-style-type: none;
+    position: absolute;
+    width: 100%;
+    background-color: var(--card-bg);
+    border: 1px solid var(--primary-accent);
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.suggestions li {
+    padding: 0.7rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.suggestions li:hover,
+.suggestions li.highlighted {
+    background-color: var(--primary-accent);
+}
+
+.pokemon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.pokemon-card {
+    background-color: var(--primary-accent);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid #0f3460;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* For positioning the remove button */
+    justify-content: space-between;
+}
+
+.remove-pokemon-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    opacity: 0.5;
+    /* Override general button styles */
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+    z-index: 5;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.remove-pokemon-btn:hover {
+    background-color: transparent;
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.pokemon-sprite {
+    cursor: pointer;
+    background-color: var(--card-bg);
+    border-radius: 50%;
+    margin: 0 auto 0.5rem auto;
+    transition: transform 0.2s ease;
+}
+
+.pokemon-sprite:hover {
+    transform: scale(1.1);
+}
+
+.pokemon-name-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.pokemon-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.team-name {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    padding: 0 0.25rem;
+    border-radius: 4px;
+}
+
+.team-name:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.team-name-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--secondary-accent);
+    color: var(--text-color);
+    font: inherit; /* Inherits h2 font styles */
+    width: 60%;
+}
+
+.pokedex-link {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1rem;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.pokedex-link:hover {
+    opacity: 1;
+}
+
+.types-container {
+    margin-bottom: 0.75rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.type-bubble {
+    padding: 0.2rem 0.6rem;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.type-normal { background-color: var(--type-normal); }
+.type-fire { background-color: var(--type-fire); }
+.type-water { background-color: var(--type-water); }
+.type-electric { background-color: var(--type-electric); }
+.type-grass { background-color: var(--type-grass); }
+.type-ice { background-color: var(--type-ice); }
+.type-fighting { background-color: var(--type-fighting); }
+.type-poison { background-color: var(--type-poison); }
+.type-ground { background-color: var(--type-ground); }
+.type-flying { background-color: var(--type-flying); }
+.type-psychic { background-color: var(--type-psychic); }
+.type-bug { background-color: var(--type-bug); }
+.type-rock { background-color: var(--type-rock); }
+.type-ghost { background-color: var(--type-ghost); }
+.type-dragon { background-color: var(--type-dragon); }
+.type-dark { background-color: var(--type-dark); }
+.type-steel { background-color: var(--type-steel); }
+.type-fairy { background-color: var(--type-fairy); }
+
+.pokemon-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
+    margin-top: auto; /* Pushes stats to the bottom */
+}
+
+.pokemon-total-stats {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: var(--text-color);
+}
+
+.stat-bubble {
+    background-color: var(--card-bg);
+    padding: 0.4rem;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 0.9rem;
+    border-left: 4px solid;
+}
+
+.stat-bubble .stat-name {
+    font-weight: bold;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.stat-hp { border-color: var(--stat-hp); }
+.stat-attack { border-color: var(--stat-atk); }
+.stat-defense { border-color: var(--stat-def); }
+.stat-sp-atk { border-color: var(--stat-spa); }
+.stat-sp-def { border-color: var(--stat-spd); }
+.stat-speed { border-color: var(--stat-speed); }
+
+/* --- Winner & Tie Animations --- */
+@keyframes winner-glow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.7), 0 0 40px rgba(255, 215, 0, 0.7);
+    }
+}
+
+@keyframes winner-text-pop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.winner {
+    border-color: #ffd700;
+    animation: winner-glow 2.5s infinite ease-in-out;
+}
+
+.winner .winner-text {
+    text-shadow: 0 0 15px #ffd700;
+    animation: winner-text-pop 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+.tie {
+    border-color: var(--stat-spa);
+}
+.tie .winner-text {
+    color: var(--stat-spa);
+    animation: winner-text-pop 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
