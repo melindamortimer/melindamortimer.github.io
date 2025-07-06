@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Team Battle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Pokémon Team Battle</h1>
+
+    <div class="teams">
+        <div id="team1" class="team">
+            <h2><span class="team-name">Team 1</span> <span class="winner-text"></span></h2>
+            <p>Total Stats: <span id="team1-score">0</span></p>
+            <div class="button-container">
+                <button id="team1-btn" onclick="addPokemon('team1')">Add Random</button>
+                <button class="randomise-btn" onclick="randomiseTeam('team1')">Randomise Team</button>
+                <button class="clear-btn" onclick="clearTeam('team1')">Clear Team</button>
+            </div>
+            <div class="manual-entry">
+                <p><strong>Or type to choose Pokémon:</strong></p>
+                <div class="input-wrapper">
+                    <input type="text" class="poke-input" placeholder="Enter Pokémon name..." />
+                    <ul class="suggestions"></ul>
+                </div>
+            </div>
+            
+            <div id="team1-grid" class="pokemon-grid"></div>
+        </div>
+        <div id="team2" class="team">
+            <h2><span class="team-name">Team 2</span> <span class="winner-text"></span></h2>
+            <p>Total Stats: <span id="team2-score">0</span></p>
+            <div class="button-container">
+                <button id="team2-btn" onclick="addPokemon('team2')">Add Random</button>
+                <button class="randomise-btn" onclick="randomiseTeam('team2')">Randomise Team</button>
+                <button class="clear-btn" onclick="clearTeam('team2')">Clear Team</button>
+            </div>
+            <div class="manual-entry">
+                <p><strong>Or type to choose Pokémon:</strong></p>
+                <div class="input-wrapper">
+                    <input type="text" class="poke-input" placeholder="Enter Pokémon name..." />
+                    <ul class="suggestions"></ul>
+                </div>
+            </div>
+            
+            <div id="team2-grid" class="pokemon-grid"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

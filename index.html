@@ -3,51 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon Team Battle</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Melinda Mortimer's Portfolio</title>
+    <style>
+        :root {
+            --dark-bg: #1a1a2e;
+            --primary-accent: #0f3460;
+            --secondary-accent: #e94560;
+            --text-color: #f0f0f0;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+        }
+        h1 {
+            color: var(--secondary-accent);
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .projects a {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--primary-accent);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .projects a:hover {
+            background-color: #1c4b82;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Pokémon Team Battle</h1>
-
-    <div class="teams">
-        <div id="team1" class="team">
-            <h2><span class="team-name">Team 1</span> <span class="winner-text"></span></h2>
-            <p>Total Stats: <span id="team1-score">0</span></p>
-            <div class="button-container">
-                <button id="team1-btn" onclick="addPokemon('team1')">Add Random</button>
-                <button class="randomise-btn" onclick="randomiseTeam('team1')">Randomise Team</button>
-                <button class="clear-btn" onclick="clearTeam('team1')">Clear Team</button>
-            </div>
-            <div class="manual-entry">
-                <p><strong>Or type to choose Pokémon:</strong></p>
-                <div class="input-wrapper">
-                    <input type="text" class="poke-input" placeholder="Enter Pokémon name..." />
-                    <ul class="suggestions"></ul>
-                </div>
-            </div>
-            
-            <div id="team1-grid" class="pokemon-grid"></div>
-        </div>
-        <div id="team2" class="team">
-            <h2><span class="team-name">Team 2</span> <span class="winner-text"></span></h2>
-            <p>Total Stats: <span id="team2-score">0</span></p>
-            <div class="button-container">
-                <button id="team2-btn" onclick="addPokemon('team2')">Add Random</button>
-                <button class="randomise-btn" onclick="randomiseTeam('team2')">Randomise Team</button>
-                <button class="clear-btn" onclick="clearTeam('team2')">Clear Team</button>
-            </div>
-            <div class="manual-entry">
-                <p><strong>Or type to choose Pokémon:</strong></p>
-                <div class="input-wrapper">
-                    <input type="text" class="poke-input" placeholder="Enter Pokémon name..." />
-                    <ul class="suggestions"></ul>
-                </div>
-            </div>
-            
-            <div id="team2-grid" class="pokemon-grid"></div>
+    <div class="container">
+        <h1>Welcome</h1>
+        <p>This is my personal page. You can find my projects below.</p>
+        <div class="projects">
+            <a href="pokemon-team-builder/index.html">Pokémon Team Battle Project</a>
+            <a href="cat-snake-game/index.html">Cat Snake Game</a>
         </div>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
+
