@@ -3,57 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Melinda Mortimer's Portfolio</title>
+    <title>Melinda Mortimer's Projects</title>
     <style>
-        :root {
-            --dark-bg: #1a1a2e;
-            --primary-accent: #0f3460;
-            --secondary-accent: #e94560;
-            --text-color: #f0f0f0;
-        }
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 2rem;
-            text-align: center;
-        }
-        .container {
-            max-width: 600px;
-        }
-        h1 {
-            color: var(--secondary-accent);
-            font-size: 3rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-        }
-        p {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-        .projects a {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background-color: var(--primary-accent);
-            color: var(--text-color);
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .projects a:hover {
-            background-color: #1c4b82;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        }
+      :root {
+          --dark-bg: #1a1a2e;
+          --primary-accent: #0f3460;
+          --secondary-accent: #e94560;
+          --text-color: #f0f0f0;
+          --card-bg: #16213e;
+      }
+      body {
+          font-family: 'Roboto', sans-serif;
+          background-color: var(--dark-bg);
+          color: var(--text-color);
+          margin: 0;
+          padding: 3rem 2rem;
+          text-align: center;
+      }
+      .container {
+          max-width: 1100px;
+          margin: 0 auto;
+      }
+      h1 {
+          color: var(--secondary-accent);
+          font-size: 3rem;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          margin-bottom: 1rem;
+      }
+      .subtitle {
+          font-size: 1.2rem;
+          line-height: 1.6;
+          margin-bottom: 4rem;
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
+          color: #b0b0c0;
+      }
+      .project-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 2.5rem;
+          text-align: left;
+      }
+      .project-tile {
+          background-color: var(--card-bg);
+          border-radius: 15px;
+          overflow: hidden;
+          position: relative;
+          text-decoration: none;
+          color: var(--text-color);
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          min-height: 400px;
+          box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .project-tile:hover {
+          transform: translateY(-10px);
+          box-shadow: 0 20px 35px rgba(0,0,0,0.6);
+      }
+      .project-image {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-size: cover;
+          background-position: center;
+          transition: transform 0.4s ease-out;
+      }
+      .project-tile:hover .project-image {
+          transform: scale(1.05);
+      }
+      .project-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(to top, rgba(22, 33, 62, 0.98) 25%, transparent 60%);
+          z-index: 1;
+      }
+      .project-content {
+          position: relative;
+          z-index: 2;
+          padding: 1.5rem;
+          transition: transform 0.3s ease;
+      }
+      .project-content h3 {
+          font-size: 1.75rem;
+          margin-bottom: 0.5rem;
+          color: #fff;
+      }
+      .project-description {
+          font-size: 1rem;
+          line-height: 1.5;
+          color: #ccc;
+          margin: 0;
+      }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,13 +110,27 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome</h1>
-        <p>This is my personal page. You can find my projects below.</p>
-        <div class="projects">
-            <a href="pokemon-team-builder/index.html">Pokémon Team Battle Project</a>
-            <a href="cat-snake-game/index.html">Cat Snake Game</a>
+        <h1>Current Projects</h1>
+        <p class="subtitle">A collection of AI coding experiments</p>
+        <div class="project-grid">
+            <a href="pokemon-team-builder/index.html" class="project-tile">
+                <div class="project-image" style="background-image: url('images/back-pokemon.png');"></div>
+                <div class="project-overlay"></div>
+                <div class="project-content">
+                    <h3>Pokémon Team Battle</h3>
+                    <p class="project-description">Build and rank two Pokémon teams based on their total stats</p>
+                </div>
+            </a>
+            <a href="cat-snake-game/index.html" class="project-tile">
+                <div class="project-image" style="background-image: url('images/back-cat.png');"></div>
+                <div class="project-overlay"></div>
+                <div class="project-content">
+                    <h3>Cat-Snake Game (WIP)</h3>
+                    <p class="project-description">A classic snake game with a feline twist. Guide the cat to catch the fish!
+                        Note game mechanics are not yet completed</p>
+                </div>
+            </a>
         </div>
     </div>
 </body>
 </html>
-
