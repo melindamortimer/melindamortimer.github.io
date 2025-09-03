@@ -387,6 +387,232 @@ button:disabled {
 .stat-sp-def { border-color: var(--stat-spd); }
 .stat-speed { border-color: var(--stat-speed); }
 
+/* --- Save Button --- */
+.save-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.save-btn {
+    background-color: #2a9d8f; /* Teal */
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    width: auto;
+    margin-bottom: 0;
+}
+
+.save-btn:hover {
+    background-color: #264653;
+}
+
+/* --- History Section --- */
+#history-container {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--primary-accent);
+}
+
+.history-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+#history-container h2 {
+    color: var(--secondary-accent);
+    font-size: 2rem;
+    text-align: center;
+    margin: 0;
+}
+
+.history-controls {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.history-control-btn {
+    background-color: var(--primary-accent);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    width: auto;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+.history-page-size-label {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    opacity: 0.8;
+}
+
+.history-page-size-input {
+    width: 50px;
+    padding: 0.3rem;
+    background-color: var(--dark-bg);
+    border: 1px solid var(--primary-accent);
+    border-radius: 4px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-right: 1rem;
+}
+/* Hide number input arrows */
+.history-page-size-input::-webkit-outer-spin-button,
+.history-page-size-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* --- Win Tally --- */
+#win-tally-container {
+    background-color: var(--primary-accent);
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.win-tally-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem 2rem;
+}
+
+.win-tally-list li {
+    font-size: 1.1rem;
+}
+
+.win-tally-list li strong {
+    color: var(--secondary-accent);
+}
+
+.history-entry {
+    background-color: var(--card-bg);
+    border: 2px solid var(--primary-accent);
+    border-radius: 15px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.delete-history-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    opacity: 0.5;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 1;
+    z-index: 5;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.delete-history-btn:hover {
+    background-color: transparent;
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.history-meta {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.history-team-compact h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.history-winner-tag {
+    color: #ffd700;
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+.history-tie-tag {
+    color: var(--stat-spa);
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+.history-pokemon-list {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    line-height: 1.4;
+    word-break: break-word;
+    padding-left: 1rem;
+}
+
+.history-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+}
+
+#pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.pagination-btn {
+    background-color: var(--primary-accent);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    width: auto;
+    margin-bottom: 0;
+    font-weight: normal;
+    min-width: 38px;
+}
+
+.pagination-btn.active {
+    background-color: var(--secondary-accent);
+    color: var(--text-color);
+    cursor: default;
+}
+
+.pagination-btn:disabled:not(.active) {
+    background-color: var(--card-bg);
+    opacity: 0.5;
+}
+
+.pagination-ellipsis {
+    padding: 0.5rem 0.25rem;
+    align-self: center;
+}
+
 /* --- Winner & Tie Animations --- */
 @keyframes winner-glow {
     0%, 100% {
