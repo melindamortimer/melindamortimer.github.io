@@ -323,7 +323,7 @@ async function saveCurrentBattle() {
         team1: team1Data,
         team2: team2Data,
         winner: winner,
-        date: new Date().toLocaleString()
+        date: new Date().toISOString()
     };
 
     const history = JSON.parse(localStorage.getItem('battleHistory')) || [];
@@ -350,6 +350,7 @@ function loadHistory() {
     currentPage = 1; // Reset to the first page
     renderHistoryWithPagination();
     updateWinTally();
+    renderWinDifferenceGraph();
 }
 
 function renderHistoryEntry(result) {
@@ -371,7 +372,7 @@ function renderHistoryEntry(result) {
 
     entry.innerHTML = `
         <button class="delete-history-btn" title="Delete this entry">&times;</button>
-        <div class="history-meta"><span>${result.date}</span></div>
+        <div class="history-meta"><span>${new Date(result.date).toLocaleString()}</span></div>
         <div class="history-team-compact">
             <h3>${result.team1.name} (${result.team1.score})${team1WinnerTag}${tieTag}</h3>
             <div class="history-pokemon-list">${team1PokemonList}</div>
@@ -553,18 +554,36 @@ function updateWinTally() {
     const history = fullHistory; // Use the global fullHistory which is already loaded
     const tally = {};
 
+    // Calculate total wins
     history.forEach(result => {
-        if (result.winner === 'tie') {
-            return;
+        if (result.winner === 'tie') return;
+        const winnerName = result[result.winner].name;
+        tally[winnerName] = (tally[winnerName] || 0) + 1;
+    });
+
+    // Calculate current streaks
+    const currentStreaks = {};
+    const uniqueTeamNames = [...new Set(history.flatMap(r => [r.team1.name, r.team2.name]))];
+
+    uniqueTeamNames.forEach(teamName => {
+        let streak = 0;
+        // history is newest to oldest
+        for (const result of history) {
+            const wasInMatch = result.team1.name === teamName || result.team2.name === teamName;
+            if (!wasInMatch) continue;
+
+            const didWin = (result.winner === 'team1' && result.team1.name === teamName) ||
+                           (result.winner === 'team2' && result.team2.name === teamName);
+
+            if (didWin) {
+                streak++;
+            } else {
+                // Most recent match for this team was a loss or tie, so streak is broken.
+                break;
+            }
         }
-
-        const winnerTeamData = result[result.winner];
-        const winnerName = winnerTeamData.name;
-
-        if (tally[winnerName]) {
-            tally[winnerName]++;
-        } else {
-            tally[winnerName] = 1;
+        if (streak > 1) {
+            currentStreaks[teamName] = streak;
         }
     });
 
@@ -579,12 +598,15 @@ function updateWinTally() {
         list.className = 'win-tally-list';
         sortedTally.forEach(([name, wins]) => {
             const item = document.createElement('li');
-            item.innerHTML = `<strong>${name}:</strong> ${wins} win${wins > 1 ? 's' : ''}`;
+            const streakText = currentStreaks[name] ? ` <span class="win-streak-text">(🔥 ${currentStreaks[name]}-win streak)</span>` : '';
+            item.innerHTML = `<strong>${name}:</strong> ${wins} win${wins > 1 ? 's' : ''}${streakText}`;
             list.appendChild(item);
         });
         tallyContainer.appendChild(list);
     }
 }
+
+let graphData = []; // Store data for tooltips and clicks
 
 let allPokemonNames = [];
 
@@ -613,6 +635,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button id="export-history-btn" class="history-control-btn" title="Export History">Export</button>
             </div>
         </div>
+        <div id="win-graph-container">
+            <div class="graph-controls">
+                <label for="graph-limit" class="graph-limit-label">Graph last:</label>
+                <select id="graph-limit" class="graph-limit-select">
+                    <option value="10" selected>10 battles</option>
+                    <option value="25">25 battles</option>
+                    <option value="50">50 battles</option>
+                    <option value="0">All time</option>
+                </select>
+            </div>
+            <div id="graph-wrapper"></div>
+            <div id="graph-tooltip" style="position: absolute; pointer-events: none; opacity: 0; transition: opacity 0.2s ease;"></div>
+        </div>
         <div id="win-tally-container"></div>
         <div id="history-list"></div>
         <div class="history-footer">
@@ -631,6 +666,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('save-results-btn').addEventListener('click', saveCurrentBattle);
     document.getElementById('import-history-btn').addEventListener('click', importHistory);
     document.getElementById('export-history-btn').addEventListener('click', exportHistory);
+    document.getElementById('graph-limit').addEventListener('change', renderWinDifferenceGraph);
 
     const inputs = document.querySelectorAll(".poke-input");
     inputs.forEach(input => setupAutocomplete(input));
@@ -638,8 +674,82 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector('.teams').addEventListener('click', handleTeamNameClick);
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const graphContainer = document.getElementById('win-graph-container');
+    const tooltip = document.getElementById('graph-tooltip');
+
+    graphContainer.addEventListener('mouseover', e => {
+        if (e.target.classList.contains('graph-point-hover-target')) {
+            const index = parseInt(e.target.dataset.index, 10);
+            const data = graphData[index];
+            if (!data) return;
+
+            const team1Name = document.querySelector('#team1 .team-name').textContent;
+            const team2Name = document.querySelector('#team2 .team-name').textContent;
+
+            let content = '';
+            if (data.match) {
+                const winnerName = data.match.winner === 'tie' ? 'Tie' : data.match[data.match.winner].name;
+                content = `
+                    <strong>Match Result:</strong> ${winnerName}<br>
+                    <strong>Score:</strong> ${data.match.team1.score} - ${data.match.team2.score}<br>
+                    <strong>H2H Tally:</strong> ${team1Name} ${data.t1Wins} - ${data.t2Wins} ${team2Name}<br>
+                    <strong>Lead:</strong> ${data.diff > 0 ? `${team1Name} by ${data.diff}` : data.diff < 0 ? `${team2Name} by ${-data.diff}` : 'Even'}
+                `;
+            } else {
+                content = '<strong>Start of Series</strong><br>Tally: 0 - 0';
+            }
+            tooltip.innerHTML = content;
+            tooltip.style.opacity = 1;
+        }
+    });
+
+    graphContainer.addEventListener('mouseout', e => {
+        if (e.target.classList.contains('graph-point-hover-target')) {
+            tooltip.style.opacity = 0;
+        }
+    });
+
+    graphContainer.addEventListener('mousemove', e => {
+        if (tooltip.style.opacity === '1') {
+            const containerRect = graphContainer.getBoundingClientRect();
+            let x = e.clientX - containerRect.left;
+            let y = e.clientY - containerRect.top;
+
+            if (x + tooltip.offsetWidth + 20 > containerRect.width) x -= (tooltip.offsetWidth + 15);
+            else x += 15;
+            if (y + tooltip.offsetHeight + 20 > containerRect.height) y -= (tooltip.offsetHeight + 15);
+            else y += 15;
+
+            tooltip.style.transform = `translate(${x}px, ${y}px)`;
+        }
+    });
+
+    graphContainer.addEventListener('click', e => {
+        if (e.target.classList.contains('graph-point-hover-target')) {
+            const index = parseInt(e.target.dataset.index, 10);
+            const data = graphData[index];
+            if (!data || !data.match) return;
+
+            const matchId = data.match.id;
+            const itemGlobalIndex = fullHistory.findIndex(h => h.id === matchId);
+            if (itemGlobalIndex === -1) return;
+
+            const targetPage = Math.floor(itemGlobalIndex / historyPageSize) + 1;
+            if (targetPage !== currentPage) {
+                currentPage = targetPage;
+                renderHistoryWithPagination();
+            }
+
+            setTimeout(() => {
+                document.querySelector(`.history-entry[data-id="${matchId}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 150);
+        }
+    });
+});
 // Load history after other scripts have set up the page
 window.addEventListener('load', loadHistory);
+window.addEventListener('resize', () => renderWinDifferenceGraph()); // Re-render graph on resize
 
 function handlePageSizeChange(e) {
     let newSize = parseInt(e.target.value, 10);
@@ -748,6 +858,7 @@ function handleTeamNameClick(e) {
             // Revert to original name if the input is empty
             nameSpan.textContent = newName && newName.length > 0 ? newName : currentName;
             h2.replaceChild(nameSpan, input);
+            renderWinDifferenceGraph(); // Re-render graph in case name changed
             nameSpan.isEditing = false; // Reset flag
         };
 
@@ -803,4 +914,138 @@ async function handleManualAdd(input, name) {
         console.error(err);
         alert(`Could not find a Pokémon named "${name}". Please try again.`);
     }
+}
+
+function renderWinDifferenceGraph() {
+    const wrapper = document.getElementById('graph-wrapper');
+    if (!wrapper) return;
+    wrapper.innerHTML = ''; // Clear previous graph
+
+    const team1Name = document.querySelector('#team1 .team-name').textContent;
+    const team2Name = document.querySelector('#team2 .team-name').textContent;
+
+    const relevantHistory = fullHistory.filter(r =>
+        (r.team1.name === team1Name && r.team2.name === team2Name) ||
+        (r.team1.name === team2Name && r.team2.name === team1Name)
+    ).reverse(); // chronological
+
+    const limitSelect = document.getElementById('graph-limit');
+    const limit = limitSelect ? parseInt(limitSelect.value, 10) : 0;
+
+    let historyToGraph = relevantHistory;
+    let historyBeforeGraph = [];
+
+    if (limit > 0 && relevantHistory.length > limit) {
+        const slicePoint = relevantHistory.length - limit;
+        historyToGraph = relevantHistory.slice(slicePoint);
+        historyBeforeGraph = relevantHistory.slice(0, slicePoint);
+    }
+
+    if (relevantHistory.length < 1) {
+        wrapper.innerHTML = `<p class="graph-no-data">No head-to-head battle history found for <strong>${team1Name}</strong> vs. <strong>${team2Name}</strong>.</p>`;
+        return;
+    }
+
+    // Calculate the starting tally from matches that occurred *before* the graphed period
+    let startT1Wins = 0;
+    let startT2Wins = 0;
+    historyBeforeGraph.forEach(match => {
+        if (match.winner !== 'tie') {
+            if (match[match.winner].name === team1Name) {
+                startT1Wins++;
+            } else {
+                startT2Wins++;
+            }
+        }
+    });
+
+    // Now, build the graph data starting from this initial state
+    let runningT1Wins = startT1Wins;
+    let runningT2Wins = startT2Wins;
+    
+    graphData = [{
+        diff: startT1Wins - startT2Wins,
+        t1Wins: startT1Wins,
+        t2Wins: startT2Wins,
+        match: null
+    }];
+
+    historyToGraph.forEach(match => {
+        if (match.winner !== 'tie') {
+            if (match[match.winner].name === team1Name) runningT1Wins++;
+            else runningT2Wins++;
+        }
+        graphData.push({
+            diff: runningT1Wins - runningT2Wins,
+            t1Wins: runningT1Wins,
+            t2Wins: runningT2Wins,
+            match: match
+        });
+    });
+
+    const diffValues = graphData.map(d => d.diff);
+    const maxAbsDiff = Math.max(1, ...diffValues.map(d => Math.abs(d)));
+
+    const svgHeight = 100; // Increased for date axis
+    const svgWidth = wrapper.clientWidth;
+    const yCenter = 45; // Asymmetrical center for more space at the bottom
+    const yRange = yCenter - 15; // Range for graph line from center
+
+    const points = graphData.map((d, i) => {
+        const x = (graphData.length > 1) ? (i / (graphData.length - 1)) * (svgWidth - 40) + 10 : svgWidth / 2;
+        const y = yCenter - (d.diff / maxAbsDiff) * yRange;
+        return { x, y };
+    });
+
+    const pathString = points.map(p => `${p.x},${p.y}`).join(' L ');
+
+    const hoverCircles = points.map((p, i) =>
+        `<circle cx="${p.x}" cy="${p.y}" r="8" class="graph-point-hover-target" data-index="${i}" />`
+    ).join('');
+
+    const dateLabels = [];
+    if (historyToGraph.length > 0) {
+        const firstMatch = historyToGraph[0];
+        const lastMatch = historyToGraph[historyToGraph.length - 1];
+
+        const dateOptions = { month: 'numeric', day: 'numeric', year: '2-digit' };
+        const firstDate = new Date(firstMatch.date).toLocaleDateString(undefined, dateOptions);
+        const lastDate = new Date(lastMatch.date).toLocaleDateString(undefined, dateOptions);
+
+        // First date label (for the first match, which is at points[1])
+        dateLabels.push(`<text x="${points[1].x}" y="${svgHeight - 5}" text-anchor="middle" class="graph-label">${firstDate}</text>`);
+
+        // Last date label, if different and space allows
+        if (historyToGraph.length > 1 && firstDate !== lastDate) {
+            const lastX = points[points.length - 1].x;
+            if (lastX - points[1].x > 80) { // 80px threshold for label
+                dateLabels.push(`<text x="${lastX}" y="${svgHeight - 5}" text-anchor="middle" class="graph-label">${lastDate}</text>`);
+            }
+        }
+    }
+
+    const svg = `
+        <svg width="100%" height="${svgHeight}" class="win-graph-svg">
+            <defs>
+                <clipPath id="clip-above"><rect x="0" y="0" width="${svgWidth}" height="${yCenter}" /></clipPath>
+                <clipPath id="clip-below"><rect x="0" y="${yCenter}" width="${svgWidth}" height="${svgHeight - yCenter}" /></clipPath>
+            </defs>
+
+            <line x1="0" y1="${yCenter}" x2="${svgWidth}" y2="${yCenter}" stroke="var(--primary-accent)" stroke-width="1" stroke-dasharray="4 2" />
+
+            <path d="M ${pathString}" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" class="graph-path-above" clip-path="url(#clip-above)" />
+            <path d="M ${pathString}" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" class="graph-path-below" clip-path="url(#clip-below)" />
+
+            <g class="graph-hover-points">${hoverCircles}</g>
+
+            ${dateLabels.join('')}
+
+            <text x="10" y="15" class="graph-label">${team1Name} Lead</text>
+            <text x="10" y="${yCenter + yRange}" class="graph-label">${team2Name} Lead</text>
+            <text x="${svgWidth - 10}" y="15" text-anchor="end" class="graph-label-value">+${Math.max(0, ...diffValues)}</text>
+            <text x="${svgWidth - 10}" y="${yCenter + yRange}" text-anchor="end" class="graph-label-value">${Math.min(0, ...diffValues)}</text>
+        </svg>
+    `;
+
+    wrapper.innerHTML = svg;
 }

@@ -471,6 +471,92 @@ button:disabled {
     margin: 0;
 }
 
+/* --- Win Difference Graph --- */
+#win-graph-container {
+    margin-bottom: 2rem;
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+    position: relative; /* For tooltip positioning */
+}
+
+.graph-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.graph-limit-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.graph-limit-select {
+    background-color: var(--dark-bg);
+    border: 1px solid var(--primary-accent);
+    color: var(--text-color);
+    border-radius: 4px;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
+}
+
+#graph-wrapper {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.graph-no-data {
+    font-style: italic;
+    opacity: 0.7;
+    text-align: center;
+}
+
+.win-graph-svg {
+    overflow: visible;
+}
+
+.graph-path-above { stroke: var(--stat-spd); } /* Green for lead */
+.graph-path-below { stroke: var(--secondary-accent); } /* Red for deficit */
+
+.graph-label, .graph-label-value {
+    fill: var(--text-color);
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.graph-point-hover-target {
+    fill: var(--secondary-accent);
+    stroke: transparent;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    opacity: 0.2;
+}
+
+.graph-point-hover-target:hover {
+    opacity: 0.6;
+}
+
+#graph-tooltip {
+    background-color: var(--dark-bg);
+    border: 1px solid var(--secondary-accent);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    line-height: 1.4;
+    max-width: 250px;
+}
+
+#graph-tooltip strong {
+    color: var(--secondary-accent);
+}
+
 /* --- Win Tally --- */
 #win-tally-container {
     background-color: var(--primary-accent);
@@ -496,6 +582,11 @@ button:disabled {
 
 .win-tally-list li strong {
     color: var(--secondary-accent);
+}
+
+.win-streak-text {
+    color: var(--stat-atk);
+    font-size: 0.9em;
 }
 
 .history-entry {
