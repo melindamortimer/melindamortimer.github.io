@@ -307,6 +307,9 @@ function getTeamData(teamId) {
 async function saveCurrentBattle() {
     if (!isBattleConcluded) return;
 
+    // Hide any existing streak achievement notification
+    hideStreakAchievement();
+
     const team1Data = getTeamData('team1');
     const team2Data = getTeamData('team2');
 
@@ -330,12 +333,12 @@ async function saveCurrentBattle() {
     history.push(result);
     localStorage.setItem('battleHistory', JSON.stringify(history));
 
-    loadHistory(); // Reload to show the new entry and respect pagination
+    loadHistory(true); // Reload to show the new entry and check for streak breaks
 
     document.getElementById('save-results-btn').disabled = true;
 }
 
-function loadHistory() {
+function loadHistory(checkStreak = false) {
     fullHistory = JSON.parse(localStorage.getItem('battleHistory')) || [];
     // Sort by date descending (newest first)
     fullHistory.sort((a, b) => b.id - a.id);
@@ -349,7 +352,11 @@ function loadHistory() {
 
     currentPage = 1; // Reset to the first page
     renderHistoryWithPagination();
+    updateGoatWoat();
     updateWinTally();
+    if (checkStreak) {
+        checkForStreakBreak();
+    }
     renderWinDifferenceGraph();
 }
 
@@ -606,6 +613,147 @@ function updateWinTally() {
     }
 }
 
+function checkForStreakBreak() {
+    if (fullHistory.length < 2) return;
+
+    const history = fullHistory;
+    const latestMatch = history[0]; // newest first
+    const uniqueTeamNames = [...new Set(history.flatMap(r => [r.team1.name, r.team2.name]))];
+
+    uniqueTeamNames.forEach(teamName => {
+        // Check if this team was in the latest match
+        const wasInLatestMatch = latestMatch.team1.name === teamName || latestMatch.team2.name === teamName;
+        if (!wasInLatestMatch) return;
+
+        // Check if this team lost or tied in the latest match
+        const lostOrTied = (latestMatch.winner === 'tie') ||
+                          (latestMatch.winner === 'team1' && latestMatch.team1.name !== teamName) ||
+                          (latestMatch.winner === 'team2' && latestMatch.team2.name !== teamName);
+
+        if (!lostOrTied) return;
+
+        // Count the streak before this match
+        let streakCount = 0;
+        for (let i = 1; i < history.length; i++) {
+            const result = history[i];
+            const wasInMatch = result.team1.name === teamName || result.team2.name === teamName;
+            if (!wasInMatch) continue;
+
+            const didWin = (result.winner === 'team1' && result.team1.name === teamName) ||
+                           (result.winner === 'team2' && result.team2.name === teamName);
+
+            if (didWin) {
+                streakCount++;
+            } else {
+                break;
+            }
+        }
+
+        // If they had a streak of 2 or more, show the achievement
+        if (streakCount >= 2) {
+            showStreakBreakAchievement(teamName, streakCount);
+        }
+    });
+}
+
+function showStreakBreakAchievement(teamName, streakCount) {
+    const achievementContainer = document.getElementById('streak-achievement');
+    achievementContainer.innerHTML = `
+        <div class="streak-break-notification">
+            <button class="streak-close-btn" title="Dismiss">&times;</button>
+            💔 <strong>${teamName}</strong>'s ${streakCount}-win streak has ended!
+        </div>
+    `;
+    achievementContainer.style.display = 'block';
+
+    // Add close button handler
+    achievementContainer.querySelector('.streak-close-btn').addEventListener('click', () => {
+        achievementContainer.style.display = 'none';
+    });
+}
+
+function hideStreakAchievement() {
+    const achievementContainer = document.getElementById('streak-achievement');
+    if (achievementContainer) {
+        achievementContainer.style.display = 'none';
+    }
+}
+
+function updateGoatWoat() {
+    const history = fullHistory;
+    const allTeams = [];
+
+    // Collect all teams from all battles
+    history.forEach(result => {
+        [result.team1, result.team2].forEach((team) => {
+            allTeams.push({
+                name: team.name,
+                score: parseInt(team.score),
+                pokemon: team.pokemon.map(p => ({ name: p.name, score: p.score })),
+                matchId: result.id
+            });
+        });
+    });
+
+    const goatWoatContainer = document.getElementById('goat-woat-container');
+    goatWoatContainer.innerHTML = '';
+
+    if (allTeams.length === 0) {
+        goatWoatContainer.innerHTML = '<p class="goat-woat-no-data">No battle history yet.</p>';
+        return;
+    }
+
+    // Sort by score to find highest and lowest
+    allTeams.sort((a, b) => b.score - a.score);
+
+    const goat = allTeams[0];
+    const woat = allTeams[allTeams.length - 1];
+
+    const goatSection = document.createElement('div');
+    goatSection.className = 'goat-section';
+    goatSection.innerHTML = `
+        <h3>🐐 GOAT (Greatest of All Time)</h3>
+        <div class="goat-woat-team" data-match-id="${goat.matchId}">
+            <div class="goat-woat-team-name">${goat.name}</div>
+            <div class="goat-woat-score">Total Score: ${goat.score}</div>
+            <div class="goat-woat-pokemon">${goat.pokemon.map(p => `${p.name} (${p.score})`).join(', ')}</div>
+        </div>
+    `;
+
+    const woatSection = document.createElement('div');
+    woatSection.className = 'woat-section';
+    woatSection.innerHTML = `
+        <h3>🗑️ WOAT (Worst of All Time)</h3>
+        <div class="goat-woat-team" data-match-id="${woat.matchId}">
+            <div class="goat-woat-team-name">${woat.name}</div>
+            <div class="goat-woat-score">Total Score: ${woat.score}</div>
+            <div class="goat-woat-pokemon">${woat.pokemon.map(p => `${p.name} (${p.score})`).join(', ')}</div>
+        </div>
+    `;
+
+    goatWoatContainer.appendChild(goatSection);
+    goatWoatContainer.appendChild(woatSection);
+
+    // Add click handlers to navigate to the battle
+    goatSection.querySelector('.goat-woat-team').addEventListener('click', () => scrollToBattle(goat.matchId));
+    woatSection.querySelector('.goat-woat-team').addEventListener('click', () => scrollToBattle(woat.matchId));
+}
+
+function scrollToBattle(matchId) {
+    const itemGlobalIndex = fullHistory.findIndex(h => h.id === matchId);
+    if (itemGlobalIndex === -1) return;
+
+    const targetPage = Math.floor(itemGlobalIndex / historyPageSize) + 1;
+    if (targetPage !== currentPage) {
+        currentPage = targetPage;
+        renderHistoryWithPagination();
+    }
+
+    setTimeout(() => {
+        document.querySelector(`.history-entry[data-id="${matchId}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 150);
+}
+
 let graphData = []; // Store data for tooltips and clicks
 
 let allPokemonNames = [];
@@ -648,6 +796,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <div id="graph-wrapper"></div>
             <div id="graph-tooltip" style="position: absolute; pointer-events: none; opacity: 0; transition: opacity 0.2s ease;"></div>
         </div>
+        <div id="goat-woat-container"></div>
+        <div id="streak-achievement" style="display: none;"></div>
         <div id="win-tally-container"></div>
         <div id="history-list"></div>
         <div class="history-footer">
@@ -748,7 +898,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 // Load history after other scripts have set up the page
-window.addEventListener('load', loadHistory);
+window.addEventListener('load', () => {
+    // Always hide the streak notification on page load
+    hideStreakAchievement();
+    loadHistory();
+});
 window.addEventListener('resize', () => renderWinDifferenceGraph()); // Re-render graph on resize
 
 function handlePageSizeChange(e) {
@@ -999,30 +1153,33 @@ function renderWinDifferenceGraph() {
 
     const pathString = points.map(p => `${p.x},${p.y}`).join(' L ');
 
-    const hoverCircles = points.map((p, i) =>
-        `<circle cx="${p.x}" cy="${p.y}" r="8" class="graph-point-hover-target" data-index="${i}" />`
-    ).join('');
-
-    const dateLabels = [];
-    if (historyToGraph.length > 0) {
-        const firstMatch = historyToGraph[0];
-        const lastMatch = historyToGraph[historyToGraph.length - 1];
-
-        const dateOptions = { month: 'numeric', day: 'numeric', year: '2-digit' };
-        const firstDate = new Date(firstMatch.date).toLocaleDateString(undefined, dateOptions);
-        const lastDate = new Date(lastMatch.date).toLocaleDateString(undefined, dateOptions);
-
-        // First date label (for the first match, which is at points[1])
-        dateLabels.push(`<text x="${points[1].x}" y="${svgHeight - 5}" text-anchor="middle" class="graph-label">${firstDate}</text>`);
-
-        // Last date label, if different and space allows
-        if (historyToGraph.length > 1 && firstDate !== lastDate) {
-            const lastX = points[points.length - 1].x;
-            if (lastX - points[1].x > 80) { // 80px threshold for label
-                dateLabels.push(`<text x="${lastX}" y="${svgHeight - 5}" text-anchor="middle" class="graph-label">${lastDate}</text>`);
+    const hoverCircles = points.map((p, i) => {
+        const data = graphData[i];
+        let colorClass = 'graph-point-neutral';
+        if (data.match) {
+            if (data.match.winner !== 'tie') {
+                // Check which actual team won, not just the position
+                const winnerName = data.match[data.match.winner].name;
+                if (winnerName === team1Name) {
+                    colorClass = 'graph-point-team1-win';
+                } else if (winnerName === team2Name) {
+                    colorClass = 'graph-point-team2-win';
+                }
             }
         }
-    }
+        return `<circle cx="${p.x}" cy="${p.y}" r="8" class="graph-point-hover-target ${colorClass}" data-index="${i}" />`;
+    }).join('');
+
+    const dateLabels = [];
+    const dateOptions = { month: 'numeric', day: 'numeric', year: '2-digit' };
+
+    // Add date label for each match point (skip the starting point at index 0)
+    historyToGraph.forEach((match, i) => {
+        const pointIndex = i + 1; // +1 because index 0 is the starting point
+        const date = new Date(match.date).toLocaleDateString(undefined, dateOptions);
+        const x = points[pointIndex].x;
+        dateLabels.push(`<text x="${x}" y="${svgHeight - 5}" text-anchor="middle" class="graph-label graph-date-label">${date}</text>`);
+    });
 
     const svg = `
         <svg width="100%" height="${svgHeight}" class="win-graph-svg">
