@@ -573,6 +573,32 @@ button:disabled {
 }
 
 /* --- GOAT/WOAT Section --- */
+.goat-woat-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+.goat-woat-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.goat-woat-limit-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.goat-woat-limit-select {
+    background-color: var(--dark-bg);
+    border: 1px solid var(--primary-accent);
+    color: var(--text-color);
+    border-radius: 4px;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
+}
+
 #goat-woat-container {
     margin-bottom: 2rem;
     display: flex;
@@ -611,41 +637,115 @@ button:disabled {
     color: var(--secondary-accent);
 }
 
-.goat-woat-team {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.goat-woat-table {
+    width: 100%;
+    border-collapse: collapse;
+    display: block;
 }
 
-.goat-woat-team:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+.goat-woat-table thead {
+    background-color: rgba(0, 0, 0, 0.3);
+    display: table;
+    width: 100%;
+    table-layout: fixed;
 }
 
-.goat-woat-team-name {
-    font-size: 1.3rem;
+.goat-woat-table tbody {
+    display: block;
+    max-height: 400px; /* Roughly 3-4 rows */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Custom scrollbar for GOAT/WOAT tables */
+.goat-woat-table tbody::-webkit-scrollbar {
+    width: 8px;
+}
+
+.goat-woat-table tbody::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.goat-woat-table tbody::-webkit-scrollbar-thumb {
+    background: var(--primary-accent);
+    border-radius: 4px;
+}
+
+.goat-woat-table tbody::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-accent);
+}
+
+.goat-woat-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.goat-woat-table th {
+    padding: 0.75rem 0.5rem;
+    text-align: left;
+    font-size: 0.9rem;
     font-weight: bold;
     color: var(--text-color);
-    text-align: center;
+    opacity: 0.9;
+    border-bottom: 2px solid var(--primary-accent);
 }
 
-.goat-woat-score {
-    font-size: 1.1rem;
+.goat-woat-table tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.goat-woat-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translateX(3px);
+}
+
+.goat-woat-table td {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid rgba(15, 52, 96, 0.5);
+}
+
+.goat-woat-table .rank-cell {
+    width: 60px;
     text-align: center;
-    background-color: rgba(0,0,0,0.2);
+    font-weight: bold;
+    opacity: 0.7;
+    font-size: 0.95rem;
+}
+
+.goat-woat-table .team-info-cell {
     padding: 0.5rem;
-    border-radius: 8px;
 }
 
-.goat-woat-pokemon {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    text-align: center;
+.goat-woat-table .pokemon-list-primary {
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+}
+
+.goat-woat-table .team-name-secondary {
+    font-size: 0.85rem;
+    opacity: 0.6;
     font-style: italic;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--primary-accent);
+}
+
+.goat-woat-table .score-cell {
+    width: 100px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.goat-section .score-cell {
+    color: #ffd700;
+}
+
+.woat-section .score-cell {
+    color: var(--secondary-accent);
 }
 
 .goat-woat-no-data {

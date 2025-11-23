@@ -679,6 +679,8 @@ function hideStreakAchievement() {
     }
 }
 
+let goatWoatLimit = 3; // Default number of entries to show
+
 function updateGoatWoat() {
     const history = fullHistory;
     const allTeams = [];
@@ -706,37 +708,128 @@ function updateGoatWoat() {
     // Sort by score to find highest and lowest
     allTeams.sort((a, b) => b.score - a.score);
 
-    const goat = allTeams[0];
-    const woat = allTeams[allTeams.length - 1];
+    // Get the limit from the dropdown
+    const limitSelect = document.getElementById('goat-woat-limit');
+    const limit = limitSelect ? parseInt(limitSelect.value, 10) : goatWoatLimit;
 
+    // Get top X (GOAT) including ties
+    let goats = [];
+    if (allTeams.length > 0) {
+        goats = allTeams.slice(0, limit);
+        // If there are more teams, check if the next team(s) are tied with the last one
+        if (allTeams.length > limit) {
+            const lastScore = goats[goats.length - 1].score;
+            let i = limit;
+            while (i < allTeams.length && allTeams[i].score === lastScore) {
+                goats.push(allTeams[i]);
+                i++;
+            }
+        }
+    }
+
+    // Get bottom X (WOAT) including ties
+    let woats = [];
+    if (allTeams.length > 0) {
+        woats = allTeams.slice(-limit).reverse(); // reverse to show worst first
+        // If there are more teams, check if teams before the cutoff are tied with the first one
+        if (allTeams.length > limit) {
+            const worstScore = woats[0].score;
+            let i = allTeams.length - limit - 1;
+            while (i >= 0 && allTeams[i].score === worstScore) {
+                woats.unshift(allTeams[i]); // Add to the beginning
+                i--;
+            }
+        }
+    }
+
+    // Create GOAT section
     const goatSection = document.createElement('div');
     goatSection.className = 'goat-section';
-    goatSection.innerHTML = `
+    let goatHTML = `
         <h3>🐐 GOAT (Greatest of All Time)</h3>
-        <div class="goat-woat-team" data-match-id="${goat.matchId}">
-            <div class="goat-woat-team-name">${goat.name}</div>
-            <div class="goat-woat-score">Total Score: ${goat.score}</div>
-            <div class="goat-woat-pokemon">${goat.pokemon.map(p => `${p.name} (${p.score})`).join(', ')}</div>
-        </div>
-    `;
+        <table class="goat-woat-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>`;
 
+    let currentRank = 1;
+    goats.forEach((team, index) => {
+        // Check if this team's score is different from the previous one
+        if (index > 0 && team.score < goats[index - 1].score) {
+            currentRank = index + 1; // Skip ranks for ties
+        }
+        const pokemonList = team.pokemon.map(p => `${p.name} (${p.score})`).join(', ');
+        goatHTML += `
+            <tr class="goat-woat-row" data-match-id="${team.matchId}">
+                <td class="rank-cell">${currentRank}</td>
+                <td class="team-info-cell">
+                    <div class="pokemon-list-primary">${pokemonList}</div>
+                    <div class="team-name-secondary">${team.name}</div>
+                </td>
+                <td class="score-cell">${team.score}</td>
+            </tr>`;
+    });
+
+    goatHTML += `
+            </tbody>
+        </table>
+    `;
+    goatSection.innerHTML = goatHTML;
+
+    // Create WOAT section
     const woatSection = document.createElement('div');
     woatSection.className = 'woat-section';
-    woatSection.innerHTML = `
+    let woatHTML = `
         <h3>🗑️ WOAT (Worst of All Time)</h3>
-        <div class="goat-woat-team" data-match-id="${woat.matchId}">
-            <div class="goat-woat-team-name">${woat.name}</div>
-            <div class="goat-woat-score">Total Score: ${woat.score}</div>
-            <div class="goat-woat-pokemon">${woat.pokemon.map(p => `${p.name} (${p.score})`).join(', ')}</div>
-        </div>
+        <table class="goat-woat-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+    let woatRank = 1;
+    woats.forEach((team, index) => {
+        // Check if this team's score is different from the previous one
+        if (index > 0 && team.score > woats[index - 1].score) {
+            woatRank = index + 1; // Skip ranks for ties
+        }
+        const pokemonList = team.pokemon.map(p => `${p.name} (${p.score})`).join(', ');
+        woatHTML += `
+            <tr class="goat-woat-row" data-match-id="${team.matchId}">
+                <td class="rank-cell">${woatRank}</td>
+                <td class="team-info-cell">
+                    <div class="pokemon-list-primary">${pokemonList}</div>
+                    <div class="team-name-secondary">${team.name}</div>
+                </td>
+                <td class="score-cell">${team.score}</td>
+            </tr>`;
+    });
+
+    woatHTML += `
+            </tbody>
+        </table>
     `;
+    woatSection.innerHTML = woatHTML;
 
     goatWoatContainer.appendChild(goatSection);
     goatWoatContainer.appendChild(woatSection);
 
     // Add click handlers to navigate to the battle
-    goatSection.querySelector('.goat-woat-team').addEventListener('click', () => scrollToBattle(goat.matchId));
-    woatSection.querySelector('.goat-woat-team').addEventListener('click', () => scrollToBattle(woat.matchId));
+    goatSection.querySelectorAll('.goat-woat-row').forEach(row => {
+        row.addEventListener('click', () => scrollToBattle(parseInt(row.dataset.matchId)));
+    });
+    woatSection.querySelectorAll('.goat-woat-row').forEach(row => {
+        row.addEventListener('click', () => scrollToBattle(parseInt(row.dataset.matchId)));
+    });
 }
 
 function scrollToBattle(matchId) {
@@ -796,6 +889,17 @@ document.addEventListener("DOMContentLoaded", () => {
             <div id="graph-wrapper"></div>
             <div id="graph-tooltip" style="position: absolute; pointer-events: none; opacity: 0; transition: opacity 0.2s ease;"></div>
         </div>
+        <div class="goat-woat-header">
+            <div class="goat-woat-controls">
+                <label for="goat-woat-limit" class="goat-woat-limit-label">Show top/bottom:</label>
+                <select id="goat-woat-limit" class="goat-woat-limit-select">
+                    <option value="3" selected>3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+        </div>
         <div id="goat-woat-container"></div>
         <div id="streak-achievement" style="display: none;"></div>
         <div id="win-tally-container"></div>
@@ -817,6 +921,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('import-history-btn').addEventListener('click', importHistory);
     document.getElementById('export-history-btn').addEventListener('click', exportHistory);
     document.getElementById('graph-limit').addEventListener('change', renderWinDifferenceGraph);
+    document.getElementById('goat-woat-limit').addEventListener('change', updateGoatWoat);
 
     const inputs = document.querySelectorAll(".poke-input");
     inputs.forEach(input => setupAutocomplete(input));
