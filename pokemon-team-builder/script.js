@@ -56,6 +56,7 @@ function setTeamControlsState(teamId, disabled) {
     if (teamContainer) {
         teamContainer.querySelector(`#${teamId}-btn`).disabled = disabled;
         teamContainer.querySelector('.randomise-btn').disabled = disabled;
+        teamContainer.querySelector('.paste-team-btn').disabled = disabled;
         teamContainer.querySelector('.poke-input').disabled = disabled;
     }
 }
@@ -232,6 +233,291 @@ async function randomiseTeam(teamId) {
     }
 }
 
+function pasteTeamFromClipboard(teamId) {
+    openPasteModal(teamId);
+}
+
+function createPasteModal() {
+    if (document.getElementById('paste-modal')) return;
+
+    const modal = document.createElement('div');
+    modal.id = 'paste-modal';
+    modal.className = 'paste-modal';
+    modal.innerHTML = `
+        <div class="paste-modal-content">
+            <button class="paste-modal-close">&times;</button>
+            <h3>Paste Team Screenshot</h3>
+            <div id="paste-drop-zone" class="paste-drop-zone" tabindex="0">
+                <p>Press <kbd>Ctrl</kbd>+<kbd>V</kbd> or <kbd>Cmd</kbd>+<kbd>V</kbd> to paste image</p>
+                <p class="paste-hint">Or click here and paste</p>
+            </div>
+            <div id="paste-preview-container" class="paste-preview-container" style="display: none;">
+                <img id="paste-preview-image" class="paste-preview-image" />
+            </div>
+            <div id="paste-status" class="paste-status"></div>
+            <div id="paste-pokemon-list" class="paste-pokemon-list"></div>
+            <div class="paste-modal-actions">
+                <button id="paste-cancel-btn" class="paste-cancel-btn">Cancel</button>
+                <button id="paste-confirm-btn" class="paste-confirm-btn" disabled>Add to Team</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // Close button
+    modal.querySelector('.paste-modal-close').addEventListener('click', closePasteModal);
+    modal.querySelector('#paste-cancel-btn').addEventListener('click', closePasteModal);
+
+    // Click outside to close
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closePasteModal();
+    });
+
+    // Focus the drop zone for keyboard events
+    const dropZone = modal.querySelector('#paste-drop-zone');
+    dropZone.addEventListener('click', () => dropZone.focus());
+}
+
+let currentPasteTeamId = null;
+let detectedPokemonNames = [];
+let isProcessingPaste = false;
+
+function openPasteModal(teamId) {
+    createPasteModal();
+    currentPasteTeamId = teamId;
+    detectedPokemonNames = [];
+    isProcessingPaste = false;
+
+    const modal = document.getElementById('paste-modal');
+    modal.style.display = 'flex';
+
+    // Reset modal state
+    document.getElementById('paste-drop-zone').style.display = 'block';
+    document.getElementById('paste-preview-container').style.display = 'none';
+    document.getElementById('paste-status').textContent = '';
+    document.getElementById('paste-pokemon-list').innerHTML = '';
+    document.getElementById('paste-confirm-btn').disabled = true;
+
+    // Focus the drop zone
+    setTimeout(() => document.getElementById('paste-drop-zone').focus(), 100);
+
+    // Add global paste listener while modal is open
+    document.addEventListener('paste', handlePasteEvent);
+}
+
+function closePasteModal() {
+    const modal = document.getElementById('paste-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    currentPasteTeamId = null;
+    detectedPokemonNames = [];
+    document.removeEventListener('paste', handlePasteEvent);
+}
+
+async function handlePasteEvent(e) {
+    const modal = document.getElementById('paste-modal');
+    if (!modal || modal.style.display === 'none') return;
+    if (isProcessingPaste) return;
+
+    e.preventDefault();
+    isProcessingPaste = true;
+
+    const items = e.clipboardData?.items;
+    if (!items) {
+        isProcessingPaste = false;
+        return;
+    }
+
+    let imageBlob = null;
+    for (const item of items) {
+        if (item.type.startsWith('image/')) {
+            imageBlob = item.getAsFile();
+            break;
+        }
+    }
+
+    if (!imageBlob) {
+        document.getElementById('paste-status').textContent = 'No image found. Please copy an image first.';
+        isProcessingPaste = false;
+        return;
+    }
+
+    // Show image preview
+    const previewImg = document.getElementById('paste-preview-image');
+    const previewContainer = document.getElementById('paste-preview-container');
+    const dropZone = document.getElementById('paste-drop-zone');
+    const statusEl = document.getElementById('paste-status');
+    const pokemonListEl = document.getElementById('paste-pokemon-list');
+
+    previewImg.src = URL.createObjectURL(imageBlob);
+    dropZone.style.display = 'none';
+    previewContainer.style.display = 'block';
+    statusEl.textContent = 'Reading image...';
+    pokemonListEl.innerHTML = '';
+
+    try {
+        // Run OCR
+        const { data: { text } } = await Tesseract.recognize(imageBlob, 'eng', {
+            logger: m => {
+                if (m.status === 'recognizing text') {
+                    statusEl.textContent = `Reading... ${Math.round(m.progress * 100)}%`;
+                }
+            }
+        });
+
+        // Parse Pokemon names
+        detectedPokemonNames = parsePokemonFromOCR(text);
+
+        if (detectedPokemonNames.length === 0) {
+            statusEl.textContent = 'No Pokémon detected. Try a different screenshot.';
+            document.getElementById('paste-confirm-btn').disabled = true;
+            isProcessingPaste = false;
+            return;
+        }
+
+        statusEl.textContent = `Found ${detectedPokemonNames.length} Pokémon:`;
+
+        // Show detected Pokemon with sprites
+        pokemonListEl.innerHTML = '';
+        for (const name of detectedPokemonNames) {
+            const item = document.createElement('div');
+            item.className = 'paste-pokemon-item';
+
+            // Fetch sprite
+            try {
+                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
+                const data = await response.json();
+                item.innerHTML = `
+                    <img src="${data.sprites.front_default}" alt="${name}" class="paste-pokemon-sprite" />
+                    <span>${name}</span>
+                `;
+            } catch {
+                item.innerHTML = `<span>${name}</span>`;
+            }
+            pokemonListEl.appendChild(item);
+        }
+
+        document.getElementById('paste-confirm-btn').disabled = false;
+
+        // Set up confirm button
+        const confirmBtn = document.getElementById('paste-confirm-btn');
+        confirmBtn.onclick = () => applyDetectedPokemon();
+
+        isProcessingPaste = false;
+
+    } catch (error) {
+        console.error('OCR failed:', error);
+        statusEl.textContent = 'Failed to read image. Please try again.';
+        isProcessingPaste = false;
+    }
+}
+
+async function applyDetectedPokemon() {
+    if (!currentPasteTeamId || detectedPokemonNames.length === 0) return;
+
+    // Save values before closing modal (which clears them)
+    const teamId = currentPasteTeamId;
+    const pokemonToAdd = [...detectedPokemonNames];
+    closePasteModal();
+
+    // Clear team and add detected Pokemon
+    clearTeam(teamId);
+    setTeamControlsState(teamId, true);
+
+    try {
+        const promises = pokemonToAdd.slice(0, 6).map(name => fetchPokemon(name.toLowerCase()));
+        const pokemonTeam = await Promise.all(promises);
+        pokemonTeam.forEach(pokemon => generatePokemonCard(pokemon, teamId));
+    } catch (error) {
+        console.error('Failed to load Pokemon:', error);
+        alert('Failed to load some Pokémon. Please try again.');
+        setTeamControlsState(teamId, false);
+    }
+}
+
+function findClosestPokemonName(name) {
+    const lower = name.toLowerCase();
+
+    // 1. Exact match
+    let match = allPokemonNames.find(n => n.toLowerCase() === lower);
+    if (match) return match;
+
+    // 2. Replace underscores with hyphens (e.g., deoxys_defense → deoxys-defense)
+    const hyphenated = lower.replace(/_/g, '-');
+    match = allPokemonNames.find(n => n.toLowerCase() === hyphenated);
+    if (match) return match;
+
+    // 3. Handle special form names
+    const specialForms = {
+        'nidoran_male': 'nidoran-m',
+        'nidoran-male': 'nidoran-m',
+        'nidoran_female': 'nidoran-f',
+        'nidoran-female': 'nidoran-f',
+        'mr_mime': 'mr-mime',
+        'mime_jr': 'mime-jr',
+        'type_null': 'type-null',
+        'tapu_koko': 'tapu-koko',
+        'tapu_lele': 'tapu-lele',
+        'tapu_bulu': 'tapu-bulu',
+        'tapu_fini': 'tapu-fini',
+    };
+    if (specialForms[lower]) {
+        match = allPokemonNames.find(n => n.toLowerCase() === specialForms[lower]);
+        if (match) return match;
+    }
+    if (specialForms[hyphenated]) {
+        match = allPokemonNames.find(n => n.toLowerCase() === specialForms[hyphenated]);
+        if (match) return match;
+    }
+
+    // 4. Fuzzy match: find names that start with the same base (before underscore/hyphen)
+    const baseName = lower.split(/[_-]/)[0];
+    if (baseName.length >= 3) {
+        // Try to find a Pokemon that starts with the base name and contains similar suffixes
+        const candidates = allPokemonNames.filter(n => n.toLowerCase().startsWith(baseName));
+        if (candidates.length === 1) return candidates[0];
+
+        // If multiple candidates, try to match the suffix
+        const suffix = lower.replace(baseName, '').replace(/^[_-]/, '');
+        if (suffix) {
+            const suffixMatch = candidates.find(n => n.toLowerCase().includes(suffix.replace(/_/g, '-')));
+            if (suffixMatch) return suffixMatch;
+        }
+    }
+
+    return null;
+}
+
+function parsePokemonFromOCR(text) {
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    const foundPokemon = [];
+    const seen = new Set();
+
+    for (const line of lines) {
+        const lowerLine = line.toLowerCase();
+        const defaultIndex = lowerLine.indexOf('default');
+
+        if (defaultIndex !== -1) {
+            // Extract the word after "default"
+            const afterDefault = lowerLine.substring(defaultIndex + 7).trim();
+            const pokemonName = afterDefault.split(/\s+/)[0];
+
+            if (pokemonName && !seen.has(pokemonName)) {
+                // Find closest matching Pokemon name
+                const match = findClosestPokemonName(pokemonName);
+                if (match) {
+                    foundPokemon.push(match);
+                    seen.add(pokemonName);
+                    if (foundPokemon.length >= 6) break;
+                }
+            }
+        }
+    }
+
+    return foundPokemon;
+}
+
 function checkForWinner() {
     const team1Full = document.getElementById("team1-grid").children.length === 6;
     const team2Full = document.getElementById("team2-grid").children.length === 6;
@@ -387,11 +673,73 @@ function renderHistoryEntry(result) {
         <div class="history-team-compact">
             <h3>${result.team2.name} (${result.team2.score})${team2WinnerTag}${tieTag}</h3>
             <div class="history-pokemon-list">${team2PokemonList}</div>
-        </div>`;
+        </div>
+        <span class="load-hint">Click to Load Battle</span>`;
 
-    entry.querySelector('.delete-history-btn').addEventListener('click', () => deleteHistoryEntry(result.id));
+    entry.querySelector('.delete-history-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteHistoryEntry(result.id);
+    });
+
+    // Click to load battle into main page
+    entry.addEventListener('click', () => {
+        const hint = entry.querySelector('.load-hint');
+        hint.textContent = 'Loading...';
+        hint.classList.add('loaded');
+        hint.style.opacity = '0.8';
+        loadBattleFromHistory(result, hint);
+    });
 
     historyList.appendChild(entry);
+}
+
+async function loadBattleFromHistory(result, hintElement) {
+    // Set team names
+    document.querySelector('#team1 .team-name').textContent = result.team1.name;
+    document.querySelector('#team2 .team-name').textContent = result.team2.name;
+
+    // Clear both teams
+    clearTeam('team1');
+    clearTeam('team2');
+
+    // Disable controls while loading
+    setTeamControlsState('team1', true);
+    setTeamControlsState('team2', true);
+
+    try {
+        // Load team 1
+        const team1Promises = result.team1.pokemon.map(p => fetchPokemon(p.name.toLowerCase()));
+        const team1Pokemon = await Promise.all(team1Promises);
+        team1Pokemon.forEach(pokemon => generatePokemonCard(pokemon, 'team1'));
+
+        // Load team 2
+        const team2Promises = result.team2.pokemon.map(p => fetchPokemon(p.name.toLowerCase()));
+        const team2Pokemon = await Promise.all(team2Promises);
+        team2Pokemon.forEach(pokemon => generatePokemonCard(pokemon, 'team2'));
+
+        // Update hint text
+        if (hintElement) {
+            hintElement.textContent = 'Battle Loaded!';
+            setTimeout(() => {
+                hintElement.textContent = 'Click to Load Battle';
+                hintElement.classList.remove('loaded');
+                hintElement.style.opacity = '';
+            }, 2000);
+        }
+
+        // Scroll to top to see the loaded battle
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+        console.error('Failed to load battle from history:', error);
+        alert('Failed to load some Pokémon. The battle data may be corrupted.');
+        setTeamControlsState('team1', false);
+        setTeamControlsState('team2', false);
+        if (hintElement) {
+            hintElement.textContent = 'Click to Load Battle';
+            hintElement.classList.remove('loaded');
+            hintElement.style.opacity = '';
+        }
+    }
 }
 
 function deleteHistoryEntry(id) {

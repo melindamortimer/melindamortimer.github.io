@@ -149,6 +149,13 @@ button:disabled {
     background-color: #264653;
 }
 
+.paste-team-btn {
+    background-color: #7b68ee; /* Medium slate blue */
+}
+.paste-team-btn:hover {
+    background-color: #5a4fcf;
+}
+
 .clear-btn {
     background-color: var(--primary-accent);
 }
@@ -871,6 +878,32 @@ button:disabled {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.history-entry:hover {
+    border-color: var(--secondary-accent);
+    transform: translateY(-2px);
+}
+
+.history-entry .load-hint {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.75rem;
+    opacity: 0;
+    color: var(--secondary-accent);
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.history-entry:hover .load-hint {
+    opacity: 0.8;
+}
+
+.history-entry .load-hint.loaded {
+    color: #2a9d8f;
 }
 
 .delete-history-btn {
@@ -1015,4 +1048,173 @@ button:disabled {
 .tie .winner-text {
     color: var(--stat-spa);
     animation: winner-text-pop 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+/* --- Paste Modal --- */
+.paste-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.paste-modal-content {
+    background-color: var(--card-bg);
+    border: 2px solid var(--primary-accent);
+    border-radius: 15px;
+    padding: 1.5rem;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.paste-modal-content h3 {
+    color: var(--secondary-accent);
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.paste-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    opacity: 0.6;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.paste-modal-close:hover {
+    background-color: transparent;
+    opacity: 1;
+}
+
+.paste-drop-zone {
+    border: 2px dashed var(--primary-accent);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    outline: none;
+}
+
+.paste-drop-zone:hover,
+.paste-drop-zone:focus {
+    border-color: var(--secondary-accent);
+    background-color: rgba(233, 69, 96, 0.1);
+}
+
+.paste-drop-zone p {
+    margin: 0.5rem 0;
+    background: none;
+    padding: 0;
+}
+
+.paste-drop-zone kbd {
+    background-color: var(--primary-accent);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+.paste-hint {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.paste-preview-container {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.paste-preview-image {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 1px solid var(--primary-accent);
+}
+
+.paste-status {
+    text-align: center;
+    margin: 1rem 0;
+    font-weight: bold;
+    min-height: 1.5rem;
+}
+
+.paste-pokemon-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.paste-pokemon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--primary-accent);
+    padding: 0.5rem;
+    border-radius: 8px;
+    min-width: 80px;
+}
+
+.paste-pokemon-sprite {
+    width: 50px;
+    height: 50px;
+    image-rendering: pixelated;
+}
+
+.paste-pokemon-item span {
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.paste-modal-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.paste-modal-actions button {
+    flex: 1;
+    max-width: 150px;
+}
+
+.paste-cancel-btn {
+    background-color: var(--primary-accent);
+}
+
+.paste-cancel-btn:hover {
+    background-color: #1c4b82;
+}
+
+.paste-confirm-btn {
+    background-color: #2a9d8f;
+}
+
+.paste-confirm-btn:hover:not(:disabled) {
+    background-color: #264653;
 }

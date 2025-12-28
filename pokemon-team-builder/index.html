@@ -16,6 +16,7 @@
             <div class="button-container">
                 <button id="team1-btn" onclick="addPokemon('team1')">Add Random</button>
                 <button class="randomise-btn" onclick="randomiseTeam('team1')">Randomise Team</button>
+                <button class="paste-team-btn" onclick="pasteTeamFromClipboard('team1')">🖼️ Paste Team<br>From Image</button>
                 <button class="clear-btn" onclick="clearTeam('team1')">Clear Team</button>
             </div>
             <div class="manual-entry">
@@ -34,6 +35,7 @@
             <div class="button-container">
                 <button id="team2-btn" onclick="addPokemon('team2')">Add Random</button>
                 <button class="randomise-btn" onclick="randomiseTeam('team2')">Randomise Team</button>
+                <button class="paste-team-btn" onclick="pasteTeamFromClipboard('team2')">🖼️ Paste Team<br>From Image</button>
                 <button class="clear-btn" onclick="clearTeam('team2')">Clear Team</button>
             </div>
             <div class="manual-entry">
@@ -48,6 +50,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
