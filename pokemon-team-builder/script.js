@@ -233,10 +233,10 @@ const achievements = [
         id: 'underdog-victory',
         title: 'Underdog Victory',
         emoji: '🏆',
-        description: 'Won with 2+ sub-300 stat Pokémon!',
+        description: 'Won with 2+ sub-250 stat Pokémon!',
         check: (team, isWinner) => {
             if (!isWinner) return false;
-            const count = team.pokemon.filter(p => p.score < 300).length;
+            const count = team.pokemon.filter(p => p.score < 250).length;
             return count >= 2;
         }
     },
@@ -437,7 +437,7 @@ function findTriggeringPokemon(achievementId, teamData, isWinner) {
         case 'magikarp-miracle':
             return pokemon.filter(p => p.name.toLowerCase() === 'magikarp');
         case 'underdog-victory':
-            return pokemon.filter(p => p.score < 300);
+            return pokemon.filter(p => p.score < 250);
         case 'baby-boom':
             return pokemon.filter(p => pokemonCategories.threeStageFirstEvolutions.includes(p.name.toLowerCase()));
         case 'final-form':
@@ -525,7 +525,7 @@ function getAchievementCriteria(achievementId) {
         'prepare-for-trouble': 'Two or more Team Rocket Pokémon are in your team.',
         'mighty-sunkern': 'Sunkern is in your team.',
         'splash': 'Magikarp is in your team.',
-        'underdog-victory': 'You won with two or more sub-300 stat Pokémon.',
+        'underdog-victory': 'You won with two or more sub-250 stat Pokémon.',
         'magikarp-miracle': 'You won with Magikarp in your team.',
         'baby-boom': 'Four or more first-stage Pokémon from 3-stage lines are in your team.',
         'final-form': 'Four or more fully evolved Pokémon are in your team.',
@@ -678,18 +678,12 @@ function filterTieredAchievements(achievements) {
             return false;
         }
 
-        // underdog-victory supersedes single sub-300 Pokemon achievements
-        // (Magikarp: 200, Sunkern: 180, Ditto: 288, Meowth: 290)
+        // underdog-victory supersedes single sub-250 Pokemon achievements
+        // (Magikarp: 200, Sunkern: 180)
         if (a.id === 'splash' && hasUnderdogVictory) {
             return false;
         }
         if (a.id === 'mighty-sunkern' && hasUnderdogVictory) {
-            return false;
-        }
-        if (a.id === 'ditto-identity-crisis' && hasUnderdogVictory) {
-            return false;
-        }
-        if (a.id === 'thats-right' && hasUnderdogVictory) {
             return false;
         }
 
