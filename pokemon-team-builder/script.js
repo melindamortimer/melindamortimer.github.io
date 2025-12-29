@@ -730,11 +730,27 @@ async function fetchPokemon(identifier) {
     };
 }
 
+function getTeamPokemonNames(teamId) {
+    const grid = document.getElementById(`${teamId}-grid`);
+    return Array.from(grid.children).map(card =>
+        card.querySelector('.pokemon-name').textContent.toLowerCase()
+    );
+}
+
 async function addPokemon(teamId) {
     if (document.getElementById(`${teamId}-grid`).children.length >= 6) return;
 
-    const id = Math.floor(Math.random() * 251) + 1;
-    const pokemon = await fetchPokemon(id);
+    const existingNames = getTeamPokemonNames(teamId);
+    let pokemon;
+    let attempts = 0;
+
+    // Keep trying until we get a non-duplicate (max 50 attempts to avoid infinite loop)
+    do {
+        const id = Math.floor(Math.random() * 251) + 1;
+        pokemon = await fetchPokemon(id);
+        attempts++;
+    } while (existingNames.includes(pokemon.name.toLowerCase()) && attempts < 50);
+
     generatePokemonCard(pokemon, teamId);
 }
 
@@ -905,11 +921,13 @@ async function randomiseTeam(teamId) {
     setTeamControlsState(teamId, true);
 
     try {
-        const promises = [];
-        for (let i = 0; i < 6; i++) {
-            const id = Math.floor(Math.random() * 251) + 1;
-            promises.push(fetchPokemon(id));
+        // Generate 6 unique random IDs
+        const usedIds = new Set();
+        while (usedIds.size < 6) {
+            usedIds.add(Math.floor(Math.random() * 251) + 1);
         }
+
+        const promises = Array.from(usedIds).map(id => fetchPokemon(id));
         const pokemonTeam = await Promise.all(promises);
         pokemonTeam.forEach(pokemon => generatePokemonCard(pokemon, teamId));
     } catch (error) {
