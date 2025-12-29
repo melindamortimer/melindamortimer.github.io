@@ -7,7 +7,700 @@ const statMappings = {
     'speed': { short: 'SPE', className: 'stat-speed' }
 };
 
+// Easter Egg Pokemon Categories
+const pokemonCategories = {
+    legendaries: [
+        'articuno', 'zapdos', 'moltres', 'mewtwo', 'mew',
+        'raikou', 'entei', 'suicune', 'lugia', 'ho-oh', 'celebi',
+        'regirock', 'regice', 'registeel', 'latias', 'latios',
+        'kyogre', 'groudon', 'rayquaza', 'jirachi', 'deoxys',
+        'uxie', 'mesprit', 'azelf', 'dialga', 'palkia', 'heatran',
+        'regigigas', 'giratina', 'cresselia', 'phione', 'manaphy',
+        'darkrai', 'shaymin', 'arceus'
+    ],
+    legendaryBirds: ['articuno', 'zapdos', 'moltres'],
+    towerDuo: ['lugia', 'ho-oh'],
+    teamRocketMeowth: ['meowth'],
+    teamRocketOther: ['ekans', 'arbok', 'koffing', 'weezing'],
+    eeveelutions: ['vaporeon', 'jolteon', 'flareon', 'espeon', 'umbreon', 'leafeon', 'glaceon', 'sylveon'],
+    fossils: ['omanyte', 'omastar', 'kabuto', 'kabutops', 'aerodactyl', 'lileep', 'cradily', 'anorith', 'armaldo', 'cranidos', 'rampardos', 'shieldon', 'bastiodon', 'tirtouga', 'carracosta', 'archen', 'archeops'],
+    kantoStarters: ['bulbasaur', 'ivysaur', 'venusaur', 'charmander', 'charmeleon', 'charizard', 'squirtle', 'wartortle', 'blastoise'],
+    kantoStarterLines: {
+        grass: ['bulbasaur', 'ivysaur', 'venusaur'],
+        fire: ['charmander', 'charmeleon', 'charizard'],
+        water: ['squirtle', 'wartortle', 'blastoise']
+    },
+    pikachuFamily: ['pichu', 'pikachu', 'raichu'],
+    plusleminun: ['plusle', 'minun'],
+    pinkPokemon: ['clefairy', 'clefable', 'jigglypuff', 'wigglytuff', 'slowpoke', 'slowbro', 'exeggcute', 'lickitung', 'chansey', 'mr-mime', 'porygon', 'mew', 'cleffa', 'igglybuff', 'flaaffy', 'hoppip', 'slowking', 'snubbull', 'corsola', 'smoochum', 'miltank', 'blissey', 'whismur', 'skitty', 'milotic', 'gorebyss', 'luvdisc', 'cherubi', 'mime-jr', 'happiny', 'lickilicky', 'porygon-z', 'munna', 'musharna', 'audino', 'alomomola', 'spritzee', 'aromatisse', 'sylveon'],
+    dragons: ['dratini', 'dragonair', 'dragonite', 'kingdra', 'vibrava', 'flygon', 'altaria', 'bagon', 'shelgon', 'salamence', 'latias', 'latios', 'rayquaza', 'gible', 'gabite', 'garchomp', 'dialga', 'palkia', 'giratina', 'axew', 'fraxure', 'haxorus', 'druddigon', 'deino', 'zweilous', 'hydreigon', 'reshiram', 'zekrom', 'kyurem', 'goomy', 'sliggoo', 'goodra', 'noibat', 'noivern'],
+    sunkern: ['sunkern'],
+    magikarp: ['magikarp'],
+    ditto: ['ditto'],
+    slowpokes: ['slowpoke', 'slowbro', 'slowking'],
+    mewtwoMew: ['mewtwo', 'mew'],
+    // Pokemon that are base forms of 3-stage evolution lines
+    threeStageFirstEvolutions: [
+        'bulbasaur', 'charmander', 'squirtle', 'caterpie', 'weedle', 'pidgey',
+        'nidoran-f', 'nidoran-m', 'zubat', 'oddish', 'poliwag', 'abra', 'machop',
+        'bellsprout', 'geodude', 'magnemite', 'gastly', 'rhyhorn', 'horsea',
+        'porygon', 'dratini', 'chikorita', 'cyndaquil', 'totodile', 'togepi',
+        'mareep', 'hoppip', 'swinub', 'larvitar', 'treecko', 'torchic', 'mudkip',
+        'wurmple', 'lotad', 'seedot', 'ralts', 'slakoth', 'whismur', 'aron',
+        'budew', 'trapinch', 'duskull', 'spheal', 'bagon', 'beldum'
+    ],
+    // Pokemon that are fully evolved (final stage)
+    finalEvolutions: [
+        'venusaur', 'charizard', 'blastoise', 'butterfree', 'beedrill', 'pidgeot', 'raticate',
+        'fearow', 'arbok', 'raichu', 'sandslash', 'nidoqueen', 'nidoking', 'clefable', 'wigglytuff',
+        'crobat', 'vileplume', 'bellossom', 'parasect', 'venomoth', 'dugtrio', 'persian', 'golduck',
+        'primeape', 'arcanine', 'poliwrath', 'politoed', 'alakazam', 'machamp', 'victreebel',
+        'tentacruel', 'golem', 'rapidash', 'slowbro', 'slowking', 'magnezone', 'dodrio', 'dewgong',
+        'muk', 'cloyster', 'gengar', 'steelix', 'hypno', 'kingler', 'electrode', 'exeggutor',
+        'marowak', 'hitmonlee', 'hitmonchan', 'hitmontop', 'weezing', 'rhyperior', 'blissey',
+        'tangrowth', 'kingdra', 'seaking', 'starmie', 'mr-mime', 'scizor', 'jynx', 'electivire',
+        'magmortar', 'gyarados', 'vaporeon', 'jolteon', 'flareon', 'espeon', 'umbreon', 'leafeon',
+        'glaceon', 'sylveon', 'porygon-z', 'omastar', 'kabutops', 'dragonite', 'meganium',
+        'typhlosion', 'feraligatr', 'furret', 'noctowl', 'ledian', 'ariados', 'lanturn', 'togekiss',
+        'xatu', 'ampharos', 'azumarill', 'sudowoodo', 'jumpluff', 'ambipom', 'sunflora', 'wobbuffet',
+        'quagsire', 'honchkrow', 'mismagius', 'gliscor', 'granbull', 'weavile', 'ursaring', 'magcargo',
+        'mamoswine', 'octillery', 'houndoom', 'donphan', 'wyrdeer', 'tyranitar', 'sceptile', 'blaziken',
+        'swampert', 'mightyena', 'linoone', 'beautifly', 'dustox', 'ludicolo', 'shiftry', 'swellow',
+        'pelipper', 'gardevoir', 'gallade', 'masquerain', 'breloom', 'slaking', 'ninjask', 'shedinja',
+        'exploud', 'hariyama', 'delcatty', 'aggron', 'medicham', 'manectric', 'roserade', 'swalot',
+        'sharpedo', 'wailord', 'camerupt', 'grumpig', 'flygon', 'cacturne', 'altaria', 'whiscash',
+        'crawdaunt', 'claydol', 'cradily', 'armaldo', 'milotic', 'banette', 'dusknoir', 'chimecho',
+        'glalie', 'froslass', 'walrein', 'huntail', 'gorebyss', 'salamence', 'metagross'
+    ]
+};
+
+// Achievement Definitions
+// ========================
+// Easter eggs that trigger when certain Pokemon or combinations appear in a team.
+// Achievements are detected when a battle concludes and saved with the battle history.
+//
+// LEGENDARY:
+//   ⭐ Legendary Encounter     - 1 legendary Pokemon in team
+//   🌟 Mythical Assembly       - 2 legendary Pokemon in team
+//   👑 Pantheon                - 3+ legendary Pokemon in team
+//   🐦 Bird Keeper             - All 3 legendary birds (Articuno, Zapdos, Moltres)
+//   🗼 Tower Guardians         - Lugia and Ho-Oh together
+//   🧬 Genetic Experiment      - Mewtwo or Mew in team
+//
+// TEAM ROCKET:
+//   😺 That's Right!           - Meowth in team
+//   🚀 Prepare for Trouble!    - 2+ Team Rocket Pokemon (Ekans, Arbok, Koffing, Weezing)
+//
+// UNDERDOG:
+//   🌻 The Mighty Sunkern      - Sunkern in team (lowest base stat Pokemon)
+//   🐟 Splash!                 - Magikarp in team
+//   🏆 Underdog Victory        - Won with 2+ sub-300 total stat Pokemon
+//   ✨ Magikarp Miracle        - Won with Magikarp in team
+//
+// EVOLUTION:
+//   🍼 Baby Boom               - 4+ first-stage Pokemon from 3-stage evolution lines
+//   💪 Final Form              - 4+ fully evolved Pokemon
+//   🦊 Eeveelution Squad       - 3+ Eeveelutions
+//
+// ICONIC:
+//   ⚡ I Choose You!           - Pikachu in team
+//   👨‍👩‍👧 Pika-Family              - 2+ Pikachu family members (Pichu, Pikachu, Raichu)
+//   🎮 Kanto Starters          - Pokemon from all 3 Kanto starter lines
+//   🦴 Fossil Revival          - 2+ fossil Pokemon
+//   ➕➖ Dynamic Duo            - Plusle AND Minun together
+//
+// TYPE SPECIALIST:
+//   🐉 Dragon Tamer            - 3+ Dragon type Pokemon
+//
+// FUN:
+//   🫠 Ditto's Identity Crisis - Ditto in team
+//   🦥 Slowpoke Mode           - Slowpoke family in team
+//   🌸 Pretty in Pink          - 3+ pink Pokemon
+//
+// CROSS-TEAM:
+//   🪞 Mirror Match!           - Same Pokemon appears on both teams
+//   ⚔️ Legendary Standoff!     - Same legendary Pokemon on both teams (supersedes Mirror Match)
+//
+const achievements = [
+    // Legendary achievements
+    {
+        id: 'legendary-encounter',
+        title: 'Legendary Encounter',
+        emoji: '⭐',
+        description: 'A legendary Pokémon appeared!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.legendaries.includes(p)).length;
+            return count === 1;
+        }
+    },
+    {
+        id: 'mythical-assembly',
+        title: 'Mythical Assembly',
+        emoji: '🌟',
+        description: 'Two legendary Pokémon unite!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.legendaries.includes(p)).length;
+            return count === 2;
+        }
+    },
+    {
+        id: 'pantheon',
+        title: 'Pantheon',
+        emoji: '👑',
+        description: 'Three or more legendaries assembled!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.legendaries.includes(p)).length;
+            return count >= 3;
+        }
+    },
+    {
+        id: 'bird-keeper',
+        title: 'Bird Keeper',
+        emoji: '🐦',
+        description: 'All three legendary birds!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemonCategories.legendaryBirds.every(bird => pokemon.includes(bird));
+        }
+    },
+    {
+        id: 'tower-guardians',
+        title: 'Tower Guardians',
+        emoji: '🗼',
+        description: 'Lugia and Ho-Oh together!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemonCategories.towerDuo.every(p => pokemon.includes(p));
+        }
+    },
+    {
+        id: 'genetic-experiment',
+        title: 'Genetic Experiment',
+        emoji: '🧬',
+        description: 'Mewtwo or Mew in the team!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemonCategories.mewtwoMew.some(p => pokemon.includes(p));
+        }
+    },
+    // Team Rocket
+    {
+        id: 'thats-right',
+        title: "That's Right!",
+        emoji: '😺',
+        description: 'Meowth is in the team!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemon.some(p => pokemonCategories.teamRocketMeowth.includes(p));
+        }
+    },
+    {
+        id: 'prepare-for-trouble',
+        title: 'Prepare for Trouble!',
+        emoji: '🚀',
+        description: 'Two or more Team Rocket Pokémon!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.teamRocketOther.includes(p)).length;
+            return count >= 2;
+        }
+    },
+    // Underdog achievements
+    {
+        id: 'mighty-sunkern',
+        title: 'The Mighty Sunkern',
+        emoji: '🌻',
+        description: 'Sunkern believes in itself!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemon.includes('sunkern');
+        }
+    },
+    {
+        id: 'splash',
+        title: 'Splash!',
+        emoji: '🐟',
+        description: 'Magikarp used Splash!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemon.includes('magikarp');
+        }
+    },
+    {
+        id: 'underdog-victory',
+        title: 'Underdog Victory',
+        emoji: '🏆',
+        description: 'Won with 2+ sub-300 stat Pokémon!',
+        check: (team, isWinner) => {
+            if (!isWinner) return false;
+            const count = team.pokemon.filter(p => p.score < 300).length;
+            return count >= 2;
+        }
+    },
+    {
+        id: 'magikarp-miracle',
+        title: 'Magikarp Miracle',
+        emoji: '✨',
+        description: 'Magikarp helped win the battle!',
+        check: (team, isWinner) => {
+            if (!isWinner) return false;
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemon.includes('magikarp');
+        }
+    },
+    // Evolution achievements
+    {
+        id: 'baby-boom',
+        title: 'Baby Boom',
+        emoji: '🍼',
+        description: 'Four or more first-stage Pokémon from 3-stage lines!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.threeStageFirstEvolutions.includes(p)).length;
+            return count >= 4;
+        }
+    },
+    {
+        id: 'final-form',
+        title: 'Final Form',
+        emoji: '💪',
+        description: 'Four or more fully evolved Pokémon!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.finalEvolutions.includes(p)).length;
+            return count >= 4;
+        }
+    },
+    {
+        id: 'eeveelution-squad',
+        title: 'Eeveelution Squad',
+        emoji: '🦊',
+        description: 'Three or more Eeveelutions!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.eeveelutions.includes(p)).length;
+            return count >= 3;
+        }
+    },
+    // Iconic achievements
+    {
+        id: 'i-choose-you',
+        title: 'I Choose You!',
+        emoji: '⚡',
+        description: 'Pikachu is on the team!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemon.includes('pikachu');
+        }
+    },
+    {
+        id: 'pika-family',
+        title: 'Pika-Family',
+        emoji: '👨‍👩‍👧',
+        description: 'Multiple Pikachu family members!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.pikachuFamily.includes(p)).length;
+            return count >= 2;
+        }
+    },
+    {
+        id: 'kanto-starters',
+        title: 'Kanto Starters',
+        emoji: '🎮',
+        description: 'Representatives from all three Kanto starter lines!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const hasGrass = pokemonCategories.kantoStarterLines.grass.some(p => pokemon.includes(p));
+            const hasFire = pokemonCategories.kantoStarterLines.fire.some(p => pokemon.includes(p));
+            const hasWater = pokemonCategories.kantoStarterLines.water.some(p => pokemon.includes(p));
+            return hasGrass && hasFire && hasWater;
+        }
+    },
+    {
+        id: 'fossil-revival',
+        title: 'Fossil Revival',
+        emoji: '🦴',
+        description: 'Two or more fossil Pokémon!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.fossils.includes(p)).length;
+            return count >= 2;
+        }
+    },
+    {
+        id: 'dynamic-duo',
+        title: 'Dynamic Duo',
+        emoji: '➕➖',
+        description: 'Plusle and Minun together!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemon.includes('plusle') && pokemon.includes('minun');
+        }
+    },
+    // Type specialist
+    {
+        id: 'dragon-tamer',
+        title: 'Dragon Tamer',
+        emoji: '🐉',
+        description: 'Three or more Dragon types!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.dragons.includes(p)).length;
+            return count >= 3;
+        }
+    },
+    // Fun achievements
+    {
+        id: 'ditto-identity-crisis',
+        title: "Ditto's Identity Crisis",
+        emoji: '🫠',
+        description: 'Ditto is on the team!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemon.includes('ditto');
+        }
+    },
+    {
+        id: 'slowpoke-mode',
+        title: 'Slowpoke Mode',
+        emoji: '🦥',
+        description: 'Slowpoke family on the team!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            return pokemon.some(p => pokemonCategories.slowpokes.includes(p));
+        }
+    },
+    {
+        id: 'pretty-in-pink',
+        title: 'Pretty in Pink',
+        emoji: '🌸',
+        description: 'Three or more pink Pokémon!',
+        check: (team) => {
+            const pokemon = team.pokemon.map(p => p.name.toLowerCase());
+            const count = pokemon.filter(p => pokemonCategories.pinkPokemon.includes(p)).length;
+            return count >= 3;
+        }
+    }
+];
+
 let isBattleConcluded = false;
+let currentBattleAchievements = { team1: [], team2: [] };
+
+// Detect achievements for a team
+function detectAchievements(teamData, isWinner) {
+    const earned = [];
+    const pokemonNames = teamData.pokemon.map(p => p.name.toLowerCase());
+
+    for (const achievement of achievements) {
+        if (achievement.check(teamData, isWinner)) {
+            // Find which Pokemon triggered this achievement
+            const triggeringPokemon = findTriggeringPokemon(achievement.id, teamData, isWinner);
+            earned.push({
+                id: achievement.id,
+                title: achievement.title,
+                emoji: achievement.emoji,
+                description: achievement.description,
+                triggeringPokemon: triggeringPokemon
+            });
+        }
+    }
+    return earned;
+}
+
+// Find which Pokemon triggered a specific achievement
+function findTriggeringPokemon(achievementId, teamData, isWinner) {
+    const pokemon = teamData.pokemon;
+    const names = pokemon.map(p => p.name.toLowerCase());
+
+    switch (achievementId) {
+        case 'legendary-encounter':
+        case 'mythical-assembly':
+        case 'pantheon':
+            return pokemon.filter(p => pokemonCategories.legendaries.includes(p.name.toLowerCase()));
+        case 'bird-keeper':
+            return pokemon.filter(p => pokemonCategories.legendaryBirds.includes(p.name.toLowerCase()));
+        case 'tower-guardians':
+            return pokemon.filter(p => pokemonCategories.towerDuo.includes(p.name.toLowerCase()));
+        case 'genetic-experiment':
+            return pokemon.filter(p => pokemonCategories.mewtwoMew.includes(p.name.toLowerCase()));
+        case 'thats-right':
+            return pokemon.filter(p => pokemonCategories.teamRocketMeowth.includes(p.name.toLowerCase()));
+        case 'prepare-for-trouble':
+            return pokemon.filter(p => pokemonCategories.teamRocketOther.includes(p.name.toLowerCase()));
+        case 'mighty-sunkern':
+            return pokemon.filter(p => p.name.toLowerCase() === 'sunkern');
+        case 'splash':
+        case 'magikarp-miracle':
+            return pokemon.filter(p => p.name.toLowerCase() === 'magikarp');
+        case 'underdog-victory':
+            return pokemon.filter(p => p.score < 300);
+        case 'baby-boom':
+            return pokemon.filter(p => pokemonCategories.threeStageFirstEvolutions.includes(p.name.toLowerCase()));
+        case 'final-form':
+            return pokemon.filter(p => pokemonCategories.finalEvolutions.includes(p.name.toLowerCase()));
+        case 'eeveelution-squad':
+            return pokemon.filter(p => pokemonCategories.eeveelutions.includes(p.name.toLowerCase()));
+        case 'i-choose-you':
+            return pokemon.filter(p => p.name.toLowerCase() === 'pikachu');
+        case 'pika-family':
+            return pokemon.filter(p => pokemonCategories.pikachuFamily.includes(p.name.toLowerCase()));
+        case 'kanto-starters':
+            return pokemon.filter(p => pokemonCategories.kantoStarters.includes(p.name.toLowerCase()));
+        case 'fossil-revival':
+            return pokemon.filter(p => pokemonCategories.fossils.includes(p.name.toLowerCase()));
+        case 'dynamic-duo':
+            return pokemon.filter(p => pokemonCategories.plusleminun.includes(p.name.toLowerCase()));
+        case 'dragon-tamer':
+            return pokemon.filter(p => pokemonCategories.dragons.includes(p.name.toLowerCase()));
+        case 'ditto-identity-crisis':
+            return pokemon.filter(p => p.name.toLowerCase() === 'ditto');
+        case 'slowpoke-mode':
+            return pokemon.filter(p => pokemonCategories.slowpokes.includes(p.name.toLowerCase()));
+        case 'pretty-in-pink':
+            return pokemon.filter(p => pokemonCategories.pinkPokemon.includes(p.name.toLowerCase()));
+        default:
+            return [];
+    }
+}
+
+// Show single achievement detail popup (for history badge clicks)
+function showAchievementDetailPopup(achievement) {
+    // Remove existing popup
+    const existingPopup = document.getElementById('achievement-detail-popup');
+    if (existingPopup) existingPopup.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'achievement-detail-popup';
+    popup.className = 'achievement-detail-popup';
+
+    // Get criteria text based on achievement ID
+    const criteria = getAchievementCriteria(achievement.id);
+
+    popup.innerHTML = `
+        <div class="achievement-detail-content">
+            <button class="achievement-detail-close">&times;</button>
+            <div class="achievement-detail-emoji">${achievement.emoji}</div>
+            <h3>${achievement.title}</h3>
+            <p class="achievement-detail-description">${achievement.description}</p>
+            <div class="achievement-detail-criteria">
+                <strong>Criteria:</strong> ${criteria}
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    // Show with animation
+    setTimeout(() => popup.classList.add('show'), 10);
+
+    // Close button
+    popup.querySelector('.achievement-detail-close').addEventListener('click', () => {
+        popup.classList.remove('show');
+        setTimeout(() => popup.remove(), 300);
+    });
+
+    // Click outside to close
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            popup.classList.remove('show');
+            setTimeout(() => popup.remove(), 300);
+        }
+    });
+}
+
+// Get human-readable criteria for each achievement
+function getAchievementCriteria(achievementId) {
+    const criteriaMap = {
+        'legendary-encounter': 'One legendary Pokémon is in your team.',
+        'mythical-assembly': 'Two legendary Pokémon are in your team.',
+        'pantheon': 'Three or more legendary Pokémon are in your team.',
+        'bird-keeper': 'Articuno, Zapdos, and Moltres are all in your team.',
+        'tower-guardians': 'Lugia and Ho-Oh are both in your team.',
+        'genetic-experiment': 'Mewtwo or Mew is in your team.',
+        'thats-right': 'Meowth is in your team.',
+        'prepare-for-trouble': 'Two or more Team Rocket Pokémon are in your team.',
+        'mighty-sunkern': 'Sunkern is in your team.',
+        'splash': 'Magikarp is in your team.',
+        'underdog-victory': 'You won with two or more sub-300 stat Pokémon.',
+        'magikarp-miracle': 'You won with Magikarp in your team.',
+        'baby-boom': 'Four or more first-stage Pokémon from 3-stage lines are in your team.',
+        'final-form': 'Four or more fully evolved Pokémon are in your team.',
+        'eeveelution-squad': 'Three or more Eeveelutions are in your team.',
+        'i-choose-you': 'Pikachu is in your team.',
+        'pika-family': 'Two or more Pikachu family members are in your team.',
+        'kanto-starters': 'Pokémon from all three Kanto starter lines are in your team.',
+        'fossil-revival': 'Two or more fossil Pokémon are in your team.',
+        'dynamic-duo': 'Plusle and Minun are both in your team.',
+        'dragon-tamer': 'Three or more Dragon-type Pokémon are in your team.',
+        'ditto-identity-crisis': 'Ditto is in your team.',
+        'slowpoke-mode': 'A Slowpoke family member is in your team.',
+        'pretty-in-pink': 'Three or more pink Pokémon are in your team.',
+        'mirror-match': 'The same Pokémon appears on both teams.',
+        'legendary-standoff': 'The same legendary Pokémon appears on both teams.'
+    };
+    return criteriaMap[achievementId] || 'Special achievement unlocked.';
+}
+
+// Show achievement popup
+function showAchievementPopup(allAchievements) {
+    if (allAchievements.length === 0) return;
+
+    // Remove existing popup
+    const existingPopup = document.getElementById('achievement-popup');
+    if (existingPopup) existingPopup.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'achievement-popup';
+    popup.className = 'achievement-popup';
+
+    const achievementItems = allAchievements.map(a => {
+        // Generate sprite images for triggering Pokemon
+        const sprites = (a.triggeringPokemon || []).map(p => {
+            const pokeName = p.name.toLowerCase();
+            const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getPokemonIdByName(pokeName)}.png`;
+            return `<img src="${spriteUrl}" alt="${p.name}" title="${p.name}" class="achievement-pokemon-sprite" onerror="this.style.display='none'">`;
+        }).join('');
+
+        return `
+            <div class="achievement-popup-item">
+                <span class="achievement-popup-emoji">${a.emoji}</span>
+                <div class="achievement-popup-text">
+                    <strong>${a.title}</strong>
+                    <span>${a.description}</span>
+                    ${sprites ? `<div class="achievement-pokemon-sprites">${sprites}</div>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    popup.innerHTML = `
+        <div class="achievement-popup-content">
+            <button class="achievement-popup-close">&times;</button>
+            <h3>🏅 Achievements Unlocked!</h3>
+            <div class="achievement-popup-list">
+                ${achievementItems}
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    // Show with animation
+    setTimeout(() => popup.classList.add('show'), 10);
+
+    // Close button
+    popup.querySelector('.achievement-popup-close').addEventListener('click', () => {
+        popup.classList.remove('show');
+        setTimeout(() => popup.remove(), 300);
+    });
+
+    // Click outside to close
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            popup.classList.remove('show');
+            setTimeout(() => popup.remove(), 300);
+        }
+    });
+}
+
+// Helper to get Pokemon ID by name for sprite URLs
+function getPokemonIdByName(name) {
+    const index = allPokemonNames.findIndex(n => n.toLowerCase() === name.toLowerCase());
+    return index !== -1 ? index + 1 : 1;
+}
+
+// Detect achievements that involve both teams
+function detectCrossTeamAchievements(team1Data, team2Data) {
+    const earned = [];
+    const team2Names = team2Data.pokemon.map(p => p.name.toLowerCase());
+
+    // Find Pokemon that appear on both teams
+    const commonPokemon = team1Data.pokemon.filter(p =>
+        team2Names.includes(p.name.toLowerCase())
+    );
+
+    if (commonPokemon.length > 0) {
+        // Check if any common Pokemon is a legendary
+        const commonLegendaries = commonPokemon.filter(p =>
+            pokemonCategories.legendaries.includes(p.name.toLowerCase())
+        );
+
+        if (commonLegendaries.length > 0) {
+            earned.push({
+                id: 'legendary-standoff',
+                title: 'Legendary Standoff!',
+                emoji: '⚔️',
+                description: 'Same legendary Pokémon on both teams!',
+                triggeringPokemon: commonLegendaries
+            });
+        } else {
+            earned.push({
+                id: 'mirror-match',
+                title: 'Mirror Match!',
+                emoji: '🪞',
+                description: 'Same Pokémon on both teams!',
+                triggeringPokemon: commonPokemon
+            });
+        }
+    }
+
+    return earned;
+}
+
+// Filter out lower-tier achievements when higher-tier ones are present
+function filterTieredAchievements(achievements) {
+    const ids = achievements.map(a => a.id);
+
+    // Legendary tiers: pantheon > mythical-assembly > legendary-encounter
+    const hasPantheon = ids.includes('pantheon');
+    const hasMythical = ids.includes('mythical-assembly');
+
+    // Other superseding achievements
+    const hasUnderdogVictory = ids.includes('underdog-victory');
+    const hasMagikarpMiracle = ids.includes('magikarp-miracle');
+    const hasPikaFamily = ids.includes('pika-family');
+
+    return achievements.filter(a => {
+        // Legendary tiers
+        if (a.id === 'legendary-encounter' && (hasMythical || hasPantheon)) {
+            return false;
+        }
+        if (a.id === 'mythical-assembly' && hasPantheon) {
+            return false;
+        }
+
+        // magikarp-miracle supersedes splash
+        if (a.id === 'splash' && hasMagikarpMiracle) {
+            return false;
+        }
+
+        // underdog-victory supersedes single sub-300 Pokemon achievements
+        // (Magikarp: 200, Sunkern: 180, Ditto: 288, Meowth: 290)
+        if (a.id === 'splash' && hasUnderdogVictory) {
+            return false;
+        }
+        if (a.id === 'mighty-sunkern' && hasUnderdogVictory) {
+            return false;
+        }
+        if (a.id === 'ditto-identity-crisis' && hasUnderdogVictory) {
+            return false;
+        }
+        if (a.id === 'thats-right' && hasUnderdogVictory) {
+            return false;
+        }
+
+        // pika-family supersedes i-choose-you
+        if (a.id === 'i-choose-you' && hasPikaFamily) {
+            return false;
+        }
+
+        return true;
+    });
+}
 
 async function fetchPokemon(identifier) {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${identifier}`);
@@ -530,7 +1223,7 @@ function checkForWinner() {
 async function determineWinner() {
     const team1Score = parseInt(document.getElementById("team1-score").textContent);
     const team2Score = parseInt(document.getElementById("team2-score").textContent);
-    
+
     const team1 = document.getElementById("team1");
     const team2 = document.getElementById("team2");
 
@@ -546,12 +1239,17 @@ async function determineWinner() {
     // A short delay for suspense before showing the result
     await new Promise(resolve => setTimeout(resolve, 500));
 
+    let team1IsWinner = false;
+    let team2IsWinner = false;
+
     if (team1Score > team2Score) {
         team1.classList.add("winner");
         team1Text.textContent = "Winner!";
+        team1IsWinner = true;
     } else if (team2Score > team1Score) {
         team2.classList.add("winner");
         team2Text.textContent = "Winner!";
+        team2IsWinner = true;
     } else {
         // Handle a tie game
         team1.classList.add("tie");
@@ -559,6 +1257,25 @@ async function determineWinner() {
         team1Text.textContent = "Tie!";
         team2Text.textContent = "Tie!";
     }
+
+    // Detect achievements for both teams
+    const team1Data = getTeamData('team1');
+    const team2Data = getTeamData('team2');
+    currentBattleAchievements.team1 = detectAchievements(team1Data, team1IsWinner);
+    currentBattleAchievements.team2 = detectAchievements(team2Data, team2IsWinner);
+
+    // Check for cross-team achievements (Pokemon appearing on both teams)
+    const crossTeamAchievements = detectCrossTeamAchievements(team1Data, team2Data);
+
+    // Show achievement popup if any achievements were earned
+    const allAchievements = [...currentBattleAchievements.team1, ...currentBattleAchievements.team2, ...crossTeamAchievements];
+    // Deduplicate achievements (same achievement can appear for both teams)
+    let uniqueAchievements = allAchievements.filter((a, index, self) =>
+        index === self.findIndex(t => t.id === a.id)
+    );
+    // Filter out lower-tier legendary achievements when higher-tier ones are present
+    uniqueAchievements = filterTieredAchievements(uniqueAchievements);
+    showAchievementPopup(uniqueAchievements);
 
     // Show the save button
     const saveBtn = document.getElementById('save-results-btn');
@@ -607,13 +1324,24 @@ async function saveCurrentBattle() {
     else if (team2Score > team1Score) winner = 'team2';
     else winner = 'tie';
 
+    // Detect cross-team achievements for saving
+    const crossTeamAchievements = detectCrossTeamAchievements(team1Data, team2Data);
+
     const result = {
         id: Date.now(),
         team1: team1Data,
         team2: team2Data,
         winner: winner,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        achievements: {
+            team1: currentBattleAchievements.team1,
+            team2: currentBattleAchievements.team2,
+            crossTeam: crossTeamAchievements
+        }
     };
+
+    // Reset achievements for next battle
+    currentBattleAchievements = { team1: [], team2: [] };
 
     const history = JSON.parse(localStorage.getItem('battleHistory')) || [];
     history.push(result);
@@ -663,6 +1391,30 @@ function renderHistoryEntry(result) {
     const team2WinnerTag = isTeam2Winner ? ' <span class="history-winner-tag">Winner</span>' : '';
     const tieTag = isTie ? ' <span class="history-tie-tag">Tie</span>' : '';
 
+    // Generate achievement badges
+    let achievementBadgesHTML = '';
+    let historyAchievements = [];
+    if (result.achievements) {
+        const allAchievements = [
+            ...(result.achievements.team1 || []),
+            ...(result.achievements.team2 || []),
+            ...(result.achievements.crossTeam || [])
+        ];
+        // Deduplicate
+        let uniqueAchievements = allAchievements.filter((a, index, self) =>
+            index === self.findIndex(t => t.id === a.id)
+        );
+        // Filter out lower-tier legendary achievements
+        uniqueAchievements = filterTieredAchievements(uniqueAchievements);
+        historyAchievements = uniqueAchievements;
+        if (uniqueAchievements.length > 0) {
+            const badges = uniqueAchievements.map((a, idx) =>
+                `<span class="achievement-badge" data-achievement-idx="${idx}" title="${a.title}">${a.emoji}</span>`
+            ).join('');
+            achievementBadgesHTML = `<div class="history-achievements">${badges}</div>`;
+        }
+    }
+
     entry.innerHTML = `
         <button class="delete-history-btn" title="Delete this entry">&times;</button>
         <div class="history-meta"><span>${new Date(result.date).toLocaleString()}</span></div>
@@ -674,11 +1426,23 @@ function renderHistoryEntry(result) {
             <h3>${result.team2.name} (${result.team2.score})${team2WinnerTag}${tieTag}</h3>
             <div class="history-pokemon-list">${team2PokemonList}</div>
         </div>
+        ${achievementBadgesHTML}
         <span class="load-hint">Click to Load Battle</span>`;
 
     entry.querySelector('.delete-history-btn').addEventListener('click', (e) => {
         e.stopPropagation();
         deleteHistoryEntry(result.id);
+    });
+
+    // Click on achievement badges to show detail popup
+    entry.querySelectorAll('.achievement-badge').forEach(badge => {
+        badge.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(badge.dataset.achievementIdx, 10);
+            if (historyAchievements[idx]) {
+                showAchievementDetailPopup(historyAchievements[idx]);
+            }
+        });
     });
 
     // Click to load battle into main page
