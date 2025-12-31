@@ -1141,6 +1141,23 @@ async function applyDetectedPokemon() {
     }
 }
 
+function levenshteinDistance(a, b) {
+    const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+    for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+    for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+    for (let j = 1; j <= b.length; j++) {
+        for (let i = 1; i <= a.length; i++) {
+            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+            matrix[j][i] = Math.min(
+                matrix[j][i - 1] + 1,
+                matrix[j - 1][i] + 1,
+                matrix[j - 1][i - 1] + cost
+            );
+        }
+    }
+    return matrix[b.length][a.length];
+}
+
 function findClosestPokemonName(name) {
     const lower = name.toLowerCase();
 
@@ -1176,7 +1193,12 @@ function findClosestPokemonName(name) {
         if (match) return match;
     }
 
-    // 4. Fuzzy match: find names that start with the same base (before underscore/hyphen)
+    // 4. Match with hyphens/spaces stripped (e.g., "mrmime" → "mr-mime")
+    const stripped = lower.replace(/[-_\s]/g, '');
+    match = allPokemonNames.find(n => n.toLowerCase().replace(/[-_\s]/g, '') === stripped);
+    if (match) return match;
+
+    // 5. Fuzzy match: find names that start with the same base (before underscore/hyphen)
     const baseName = lower.split(/[_-]/)[0];
     if (baseName.length >= 3) {
         // Try to find a Pokemon that starts with the base name and contains similar suffixes
@@ -1189,6 +1211,26 @@ function findClosestPokemonName(name) {
             const suffixMatch = candidates.find(n => n.toLowerCase().includes(suffix.replace(/_/g, '-')));
             if (suffixMatch) return suffixMatch;
         }
+    }
+
+    // 6. Levenshtein distance for typos (e.g., "corpish" → "corphish")
+    if (stripped.length >= 4) {
+        let bestMatch = null;
+        let bestDistance = Infinity;
+        const maxDistance = Math.max(1, Math.floor(stripped.length / 4)); // Allow ~1 error per 4 chars
+
+        for (const pokemonName of allPokemonNames) {
+            const pokemonStripped = pokemonName.toLowerCase().replace(/[-_\s]/g, '');
+            // Quick length check to avoid unnecessary calculations
+            if (Math.abs(pokemonStripped.length - stripped.length) > maxDistance) continue;
+
+            const distance = levenshteinDistance(stripped, pokemonStripped);
+            if (distance < bestDistance && distance <= maxDistance) {
+                bestDistance = distance;
+                bestMatch = pokemonName;
+            }
+        }
+        if (bestMatch) return bestMatch;
     }
 
     return null;
