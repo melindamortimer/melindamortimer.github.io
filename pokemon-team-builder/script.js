@@ -1134,6 +1134,12 @@ async function applyDetectedPokemon() {
         const promises = pokemonToAdd.slice(0, 6).map(name => fetchPokemon(name.toLowerCase()));
         const pokemonTeam = await Promise.all(promises);
         pokemonTeam.forEach(pokemon => generatePokemonCard(pokemon, teamId));
+
+        // Re-enable controls if team has fewer than 6 Pokemon
+        const teamGrid = document.querySelector(`#${teamId} .pokemon-grid`);
+        if (teamGrid.children.length < 6) {
+            setTeamControlsState(teamId, false);
+        }
     } catch (error) {
         console.error('Failed to load Pokemon:', error);
         alert('Failed to load some Pokémon. Please try again.');
@@ -2220,7 +2226,10 @@ function setupAutocomplete(input) {
         const matches = allPokemonNames.filter(name => name.toLowerCase().startsWith(val)).slice(0, 6);
         matches.forEach(name => {
             const li = document.createElement("li");
-            li.textContent = name;
+            const pokedexNum = getPokemonIdByName(name);
+            const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokedexNum}.png`;
+            li.innerHTML = `<img src="${spriteUrl}" alt="${name}" class="suggestion-sprite"><span class="suggestion-name">${name}</span><span class="suggestion-number">#${pokedexNum}</span>`;
+            li.dataset.name = name;
             li.addEventListener("click", () => {
                 input.value = name;
                 list.innerHTML = "";
@@ -2247,7 +2256,7 @@ function setupAutocomplete(input) {
             }
     
             if (selectedItem) {
-                const selectedName = selectedItem.textContent;
+                const selectedName = selectedItem.dataset.name;
                 list.innerHTML = "";
                 currentIndex = -1;
                 handleManualAdd(input, selectedName);

@@ -210,9 +210,28 @@ button:disabled {
 }
 
 .suggestions li {
-    padding: 0.7rem;
+    padding: 0.5rem 0.7rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.suggestion-sprite {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+}
+
+.suggestion-name {
+    flex: 1;
+}
+
+.suggestion-number {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    opacity: 0.5;
 }
 
 .suggestions li:hover,
