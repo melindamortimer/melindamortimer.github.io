@@ -7,14 +7,17 @@ let historyPageSize = 5;
 let graphData = [];
 let allPokemonNames = [];
 let normalizedPokemonLookup = new Map();
+let pokemonIdLookup = new Map(); // Maps lowercase name -> actual PokeAPI ID
 let currentPasteTeamId = null;
 let detectedPokemonNames = [];
 let isProcessingPaste = false;
 let goatWoatLimit = 3;
 let celebrationTestMode = false; // Set to true to test the 100 wins celebration
+let tesseractWorker = null; // Pre-loaded OCR worker
 
 const DEFAULT_PAGE_SIZE = 5;
 const CENTURY_WINS_MILESTONE = 100;
+const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Crect fill='%23e0e0e0' width='96' height='96' rx='8'/%3E%3Ctext x='48' y='56' text-anchor='middle' font-size='40' fill='%23999'%3E%3F%3C/text%3E%3C/svg%3E";
 
 // ==================== 100 Wins Celebration ====================
 // Cookie rain celebration for reaching 100 wins
@@ -476,6 +479,7 @@ const POKEMON_NAME_VARIANTS = {
     'porygonz': 'porygon-z',
     'porygon_z': 'porygon-z',
     // Deoxys forms
+    'deoxys': 'deoxys-normal',
     'deoxys_normal': 'deoxys-normal',
     'deoxys_attack': 'deoxys-attack',
     'deoxys_defense': 'deoxys-defense',
@@ -484,6 +488,34 @@ const POKEMON_NAME_VARIANTS = {
     'deoxysattack': 'deoxys-attack',
     'deoxysdefense': 'deoxys-defense',
     'deoxysspeed': 'deoxys-speed',
+    // OCR error corrections (l/i confusion, missing letters)
+    'biastoise': 'blastoise',
+    'biastoie': 'blastoise',
+    'biastolse': 'blastoise',
+    'otad': 'lotad',
+    'iotad': 'lotad',
+    'iapras': 'lapras',
+    'edicott': 'ledian',
+    'edian': 'ledian',
+    'edyba': 'ledyba',
+    'udicolo': 'ludicolo',
+    'iudicolo': 'ludicolo',
+    'ombre': 'lombre',
+    'iombre': 'lombre',
+    'ucario': 'lucario',
+    'iucario': 'lucario',
+    'ugia': 'lugia',
+    'iugia': 'lugia',
+    'uxray': 'luxray',
+    'iuxray': 'luxray',
+    'uxio': 'luxio',
+    'iuxio': 'luxio',
+    'opunny': 'lopunny',
+    'iopunny': 'lopunny',
+    'anturn': 'lanturn',
+    'ianturn': 'lanturn',
+    'arvitar': 'larvitar',
+    'iarvitar': 'larvitar',
     // Unown variants (all map to base unown for PokeAPI)
     'unown_a': 'unown', 'unown_b': 'unown', 'unown_c': 'unown', 'unown_d': 'unown',
     'unown_e': 'unown', 'unown_f': 'unown', 'unown_g': 'unown', 'unown_h': 'unown',
@@ -1063,7 +1095,7 @@ function showAchievementPopup(allAchievements) {
     const achievementItems = allAchievements.map(a => {
         const sprites = (a.triggeringPokemon || []).map(p => {
             const spriteUrl = p.sprite || `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getPokemonIdByName(p.name)}.png`;
-            return `<img src="${spriteUrl}" alt="${p.name}" title="${p.name}" class="achievement-pokemon-sprite" onerror="this.style.display='none'">`;
+            return `<img src="${spriteUrl}" alt="${p.name}" title="${p.name}" class="achievement-pokemon-sprite" onerror="this.src='${PLACEHOLDER_SPRITE}';this.onerror=null">`;
         }).join('');
 
         return `
@@ -1094,8 +1126,7 @@ function showAchievementPopup(allAchievements) {
 
 // Helper to get Pokemon ID by name for sprite URLs
 function getPokemonIdByName(name) {
-    const index = allPokemonNames.findIndex(n => n.toLowerCase() === name.toLowerCase());
-    return index !== -1 ? index + 1 : 1;
+    return pokemonIdLookup.get(name.toLowerCase()) || 1;
 }
 
 // Detect achievements that involve both teams
@@ -1438,6 +1469,7 @@ function createPasteModal() {
 
 function openPasteModal(teamId) {
     createPasteModal();
+    clearAllSuggestions(); // Close any open search dropdowns
     currentPasteTeamId = teamId;
     detectedPokemonNames = [];
     isProcessingPaste = false;
@@ -1511,16 +1543,22 @@ async function handlePasteEvent(e) {
     pokemonListEl.innerHTML = '';
 
     try {
-        // Run OCR
-        const { data: { text } } = await Tesseract.recognize(imageBlob, 'eng', {
-            logger: m => {
-                if (m.status === 'recognizing text') {
-                    statusEl.textContent = `Reading... ${Math.round(m.progress * 100)}%`;
-                }
-            }
-        });
+        // Run OCR using pre-loaded worker (falls back to creating one if not ready)
+        let text;
+        if (tesseractWorker) {
+            const { data } = await tesseractWorker.recognize(imageBlob);
+            text = data.text;
+        } else {
+            statusEl.textContent = 'Initializing OCR...';
+            await initTesseractWorker();
+            const { data } = await tesseractWorker.recognize(imageBlob);
+            text = data.text;
+        }
 
         // Parse Pokemon names
+        console.log('=== OCR DEBUG: Raw text ===');
+        console.log(text);
+        console.log('=== End raw text ===');
         detectedPokemonNames = parsePokemonFromOCR(text);
 
         if (detectedPokemonNames.length === 0) {
@@ -1532,23 +1570,17 @@ async function handlePasteEvent(e) {
 
         statusEl.textContent = `Found ${detectedPokemonNames.length} Pokémon:`;
 
-        // Show detected Pokemon with sprites
+        // Show detected Pokemon with sprites (using direct URL, no API calls)
         pokemonListEl.innerHTML = '';
         for (const name of detectedPokemonNames) {
             const item = document.createElement('div');
             item.className = 'paste-pokemon-item';
-
-            // Fetch sprite
-            try {
-                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
-                const data = await response.json();
-                item.innerHTML = `
-                    <img src="${data.sprites.front_default}" alt="${name}" class="paste-pokemon-sprite" />
-                    <span>${name}</span>
-                `;
-            } catch {
-                item.innerHTML = `<span>${name}</span>`;
-            }
+            const pokedexNum = getPokemonIdByName(name);
+            const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokedexNum}.png`;
+            item.innerHTML = `
+                <img src="${spriteUrl}" alt="${name}" class="paste-pokemon-sprite" onerror="this.src='${PLACEHOLDER_SPRITE}';this.onerror=null" />
+                <span>${name}</span>
+            `;
             pokemonListEl.appendChild(item);
         }
 
@@ -1645,22 +1677,31 @@ function findClosestPokemonName(name) {
 function parsePokemonFromOCR(text) {
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     const foundPokemon = [];
-    const seen = new Set();
 
+    console.log('=== OCR DEBUG: Parsing lines ===');
     for (const line of lines) {
-        // Get the last word of each line (the Pokemon API name)
         const words = line.split(/\s+/);
-        const pokemonName = words[words.length - 1].toLowerCase();
 
-        if (pokemonName && !seen.has(pokemonName)) {
-            const match = findClosestPokemonName(pokemonName);
-            if (match) {
-                foundPokemon.push(match);
-                seen.add(pokemonName);
-                if (foundPokemon.length >= 6) break;
+        // Find the first Pokemon match in this line
+        let matchFound = null;
+        for (const word of words) {
+            const cleaned = word.toLowerCase();
+            if (cleaned) {
+                const match = findClosestPokemonName(cleaned);
+                if (match) {
+                    matchFound = match;
+                    break;
+                }
             }
         }
+
+        console.log(`Line: "${line}" | Match: ${matchFound || 'NO MATCH'}`);
+        if (matchFound) {
+            foundPokemon.push(matchFound);
+            if (foundPokemon.length >= 6) break;
+        }
     }
+    console.log('=== OCR DEBUG: Found Pokemon ===', foundPokemon);
 
     return foundPokemon;
 }
@@ -2408,12 +2449,25 @@ function scrollToBattle(matchId) {
 async function loadAllPokemonNames() {
     const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1500");
     const data = await res.json();
-    allPokemonNames = data.results.map(p => capitalize(p.name));
+
+    // Filter out fan-made Pokemon (ID >= 10000) except Deoxys variants
+    const filtered = data.results.filter(p => {
+        const id = parseInt(p.url.split('/').filter(Boolean).pop());
+        const isDeoxys = p.name.startsWith('deoxys');
+        return id < 10000 || isDeoxys;
+    });
+
+    allPokemonNames = filtered.map(p => capitalize(p.name));
 
     // Build normalized lookup map for O(1) matching
     normalizedPokemonLookup.clear();
-    for (const name of allPokemonNames) {
-        normalizedPokemonLookup.set(name.toLowerCase(), name);
+    pokemonIdLookup.clear();
+    for (const p of filtered) {
+        const name = p.name.toLowerCase();
+        normalizedPokemonLookup.set(name, capitalize(p.name));
+        // Extract ID from URL (e.g., "https://pokeapi.co/api/v2/pokemon/10001/" -> 10001)
+        const id = parseInt(p.url.split('/').filter(Boolean).pop());
+        pokemonIdLookup.set(name, id);
     }
 }
 loadAllPokemonNames();
@@ -2562,11 +2616,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// Initialize Tesseract worker with restricted character set for faster OCR
+async function initTesseractWorker() {
+    try {
+        tesseractWorker = await Tesseract.createWorker('eng');
+        await tesseractWorker.setParameters({
+            tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz- ',
+        });
+        console.log('Tesseract worker initialized');
+    } catch (error) {
+        console.error('Failed to initialize Tesseract worker:', error);
+    }
+}
+
 // Load history after other scripts have set up the page
 window.addEventListener('load', () => {
     // Always hide the streak notification on page load
     hideStreakAchievement();
     loadHistory();
+    initTesseractWorker(); // Pre-load OCR engine
 });
 window.addEventListener('resize', () => renderWinDifferenceGraph()); // Re-render graph on resize
 
@@ -2600,10 +2668,20 @@ function createPageButton(pageNumber) {
     return pageButton;
 }
 
+function clearAllSuggestions() {
+    document.querySelectorAll('.suggestions').forEach(list => list.innerHTML = '');
+}
+
 function setupAutocomplete(input) {
     const wrapper = input.parentElement;
     const list = wrapper.querySelector(".suggestions");
     let currentIndex = -1;
+
+    // Close suggestions when clicking outside or losing focus
+    input.addEventListener("blur", () => {
+        // Delay to allow click on suggestion to register first
+        setTimeout(() => { list.innerHTML = ""; }, 150);
+    });
 
     input.addEventListener("input", () => {
         const val = input.value.toLowerCase();
@@ -2616,7 +2694,7 @@ function setupAutocomplete(input) {
             const li = document.createElement("li");
             const pokedexNum = getPokemonIdByName(name);
             const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokedexNum}.png`;
-            li.innerHTML = `<img src="${spriteUrl}" alt="${name}" class="suggestion-sprite"><span class="suggestion-name">${name}</span><span class="suggestion-number">#${pokedexNum}</span>`;
+            li.innerHTML = `<img src="${spriteUrl}" alt="${name}" class="suggestion-sprite" onerror="this.src='${PLACEHOLDER_SPRITE}';this.onerror=null"><span class="suggestion-name">${name}</span><span class="suggestion-number">#${pokedexNum}</span>`;
             li.dataset.name = name;
             li.addEventListener("click", () => {
                 input.value = name;
