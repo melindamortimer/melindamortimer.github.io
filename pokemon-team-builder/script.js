@@ -1556,9 +1556,6 @@ async function handlePasteEvent(e) {
         }
 
         // Parse Pokemon names
-        console.log('=== OCR DEBUG: Raw text ===');
-        console.log(text);
-        console.log('=== End raw text ===');
         detectedPokemonNames = parsePokemonFromOCR(text);
 
         if (detectedPokemonNames.length === 0) {
@@ -1678,7 +1675,6 @@ function parsePokemonFromOCR(text) {
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     const foundPokemon = [];
 
-    console.log('=== OCR DEBUG: Parsing lines ===');
     for (const line of lines) {
         const words = line.split(/\s+/);
 
@@ -1695,13 +1691,11 @@ function parsePokemonFromOCR(text) {
             }
         }
 
-        console.log(`Line: "${line}" | Match: ${matchFound || 'NO MATCH'}`);
         if (matchFound) {
             foundPokemon.push(matchFound);
             if (foundPokemon.length >= 6) break;
         }
     }
-    console.log('=== OCR DEBUG: Found Pokemon ===', foundPokemon);
 
     return foundPokemon;
 }
