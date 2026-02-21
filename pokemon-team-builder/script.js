@@ -14,6 +14,7 @@ let isProcessingPaste = false;
 let goatWoatLimit = 3;
 let celebrationTestMode = false; // Set to true to test the 100 wins celebration
 let tesseractWorker = null; // Pre-loaded OCR worker
+let ocrDebug = true; // Set to true to show OCR detection debug logs
 
 const DEFAULT_PAGE_SIZE = 5;
 const CENTURY_WINS_MILESTONE = 100;
@@ -478,8 +479,7 @@ const POKEMON_NAME_VARIANTS = {
     'porygon_2': 'porygon2',
     'porygonz': 'porygon-z',
     'porygon_z': 'porygon-z',
-    // Deoxys forms
-    'deoxys': 'deoxys-normal',
+    // Deoxys forms (base "deoxys" handled by base-form fallback in findClosestPokemonName)
     'deoxys_normal': 'deoxys-normal',
     'deoxys_attack': 'deoxys-attack',
     'deoxys_defense': 'deoxys-defense',
@@ -936,6 +936,14 @@ const achievements = [
             return count >= 3;
         }
     },
+    // Battle result achievements
+    {
+        id: 'stalemate',
+        title: 'Stalemate',
+        emoji: '🤝',
+        description: 'The battle ended in a tie!',
+        check: (team, isWinner, isTie) => isTie
+    },
     // Fun achievements
     {
         id: 'ditto-identity-crisis',
@@ -981,11 +989,11 @@ const achievements = [
 ];
 
 // Detect achievements for a team
-function detectAchievements(teamData, isWinner) {
+function detectAchievements(teamData, isWinner, isTie = false) {
     const earned = [];
 
     for (const achievement of achievements) {
-        if (achievement.check(teamData, isWinner)) {
+        if (achievement.check(teamData, isWinner, isTie)) {
             const triggeringPokemon = findTriggeringPokemon(achievement.id, teamData);
             earned.push({
                 id: achievement.id,
@@ -1083,7 +1091,14 @@ function getAchievementCriteria(achievementId) {
         'pretty-in-pink': 'Three or more pink Pokémon are in your team.',
         'mirror-match': 'The same Pokémon appears on both teams.',
         'legendary-standoff': 'The same legendary Pokémon appears on both teams.',
-        'not-again-unown': 'An Unown is in your team.'
+        'not-again-unown': 'An Unown is in your team.',
+        'stalemate': 'Both teams have the same total score.',
+        'goat-contender': 'Your team made the GOAT top 10!',
+        'goat-elite': 'Your team made the GOAT top 3!',
+        'goat-champion': 'Your team is the #1 GOAT!',
+        'woat-contender': 'Your team made the WOAT bottom 10...',
+        'woat-elite': 'Your team made the WOAT bottom 3...',
+        'woat-champion': 'Your team is the #1 WOAT...'
     };
     return criteriaMap[achievementId] || 'Special achievement unlocked.';
 }
@@ -1165,6 +1180,90 @@ function detectCrossTeamAchievements(team1Data, team2Data) {
     return earned;
 }
 
+// Detect GOAT/WOAT ranking achievements for both teams
+function detectGoatWoatAchievements(team1Data, team2Data, existingHistory) {
+    const result = { team1: [], team2: [] };
+
+    // Build all historical team scores including the new battle
+    const allScores = [];
+    existingHistory.forEach(h => {
+        allScores.push(parseInt(h.team1.score));
+        allScores.push(parseInt(h.team2.score));
+    });
+    const team1Score = parseInt(team1Data.score);
+    const team2Score = parseInt(team2Data.score);
+    allScores.push(team1Score, team2Score);
+
+    // Sort descending for GOAT ranking
+    const sortedDesc = [...allScores].sort((a, b) => b - a);
+    // Sort ascending for WOAT ranking
+    const sortedAsc = [...allScores].sort((a, b) => a - b);
+
+    // Need enough history for rankings to be meaningful (at least 10 teams = 5 battles)
+    if (allScores.length < 10) return result;
+
+    for (const [teamId, teamData, score] of [['team1', team1Data, team1Score], ['team2', team2Data, team2Score]]) {
+        // GOAT ranking (where does this score sit among highest?)
+        const goatRank = sortedDesc.indexOf(score) + 1;
+        // WOAT ranking (where does this score sit among lowest?)
+        const woatRank = sortedAsc.indexOf(score) + 1;
+
+        if (goatRank === 1) {
+            result[teamId].push({
+                id: 'goat-champion',
+                title: 'GOAT Champion!',
+                emoji: '🐐👑',
+                description: `${teamData.name} is the #1 Greatest of All Time!`,
+                triggeringPokemon: teamData.pokemon
+            });
+        } else if (goatRank <= 3) {
+            result[teamId].push({
+                id: 'goat-elite',
+                title: 'GOAT Elite',
+                emoji: '🐐🏅',
+                description: `${teamData.name} ranked #${goatRank} all time!`,
+                triggeringPokemon: teamData.pokemon
+            });
+        } else if (goatRank <= 10) {
+            result[teamId].push({
+                id: 'goat-contender',
+                title: 'GOAT Contender',
+                emoji: '🐐',
+                description: `${teamData.name} cracked the GOAT top 10!`,
+                triggeringPokemon: teamData.pokemon
+            });
+        }
+
+        if (woatRank === 1) {
+            result[teamId].push({
+                id: 'woat-champion',
+                title: 'WOAT Champion...',
+                emoji: '🗑️👑',
+                description: `${teamData.name} is the #1 Worst of All Time...`,
+                triggeringPokemon: teamData.pokemon
+            });
+        } else if (woatRank <= 3) {
+            result[teamId].push({
+                id: 'woat-elite',
+                title: 'WOAT Elite',
+                emoji: '🗑️🏅',
+                description: `${teamData.name} ranked bottom ${woatRank} all time...`,
+                triggeringPokemon: teamData.pokemon
+            });
+        } else if (woatRank <= 10) {
+            result[teamId].push({
+                id: 'woat-contender',
+                title: 'WOAT Contender',
+                emoji: '🗑️',
+                description: `${teamData.name} sank to the WOAT bottom 10...`,
+                triggeringPokemon: teamData.pokemon
+            });
+        }
+    }
+
+    return result;
+}
+
 // Filter out lower-tier achievements when higher-tier ones are present
 function filterTieredAchievements(achievements) {
     const ids = achievements.map(a => a.id);
@@ -1205,6 +1304,18 @@ function filterTieredAchievements(achievements) {
         if (a.id === 'i-choose-you' && hasPikaFamily) {
             return false;
         }
+
+        // GOAT tiers: champion > elite > contender
+        const hasGoatChampion = ids.includes('goat-champion');
+        const hasGoatElite = ids.includes('goat-elite');
+        if (a.id === 'goat-contender' && (hasGoatElite || hasGoatChampion)) return false;
+        if (a.id === 'goat-elite' && hasGoatChampion) return false;
+
+        // WOAT tiers: champion > elite > contender
+        const hasWoatChampion = ids.includes('woat-champion');
+        const hasWoatElite = ids.includes('woat-elite');
+        if (a.id === 'woat-contender' && (hasWoatElite || hasWoatChampion)) return false;
+        if (a.id === 'woat-elite' && hasWoatChampion) return false;
 
         return true;
     });
@@ -1543,16 +1654,27 @@ async function handlePasteEvent(e) {
     pokemonListEl.innerHTML = '';
 
     try {
+        // Preprocess image for better OCR accuracy
+        statusEl.textContent = 'Processing image...';
+        const processedBlob = await preprocessForOCR(imageBlob);
+
         // Run OCR using pre-loaded worker (falls back to creating one if not ready)
+        statusEl.textContent = 'Reading image...';
         let text;
         if (tesseractWorker) {
-            const { data } = await tesseractWorker.recognize(imageBlob);
+            const { data } = await tesseractWorker.recognize(processedBlob);
             text = data.text;
         } else {
             statusEl.textContent = 'Initializing OCR...';
             await initTesseractWorker();
-            const { data } = await tesseractWorker.recognize(imageBlob);
+            const { data } = await tesseractWorker.recognize(processedBlob);
             text = data.text;
+        }
+
+        if (ocrDebug) {
+            console.log('=== OCR DEBUG: Raw text from Tesseract ===');
+            console.log(text);
+            console.log('=== End raw text ===');
         }
 
         // Parse Pokemon names
@@ -1625,7 +1747,7 @@ async function applyDetectedPokemon() {
     }
 }
 
-// Simplified Pokemon name matching - exact matches only, no fuzzy matching
+// Pokemon name matching - exact matches first, then Levenshtein fuzzy fallback
 function findClosestPokemonName(name) {
     if (!name || typeof name !== 'string') return null;
 
@@ -1636,6 +1758,7 @@ function findClosestPokemonName(name) {
     // 1. Check variant mappings first (handles special cases like nidoran, mr-mime, etc.)
     if (POKEMON_NAME_VARIANTS[cleaned]) {
         const mapped = POKEMON_NAME_VARIANTS[cleaned];
+        if (ocrDebug) console.log(`    [match] variant map: "${cleaned}" -> "${mapped}"`);
         // Try Map first, then fall back to array search
         if (normalizedPokemonLookup.has(mapped)) {
             return normalizedPokemonLookup.get(mapped);
@@ -1646,6 +1769,7 @@ function findClosestPokemonName(name) {
 
     // 2. Direct lookup in normalized map (with array fallback)
     if (normalizedPokemonLookup.has(cleaned)) {
+        if (ocrDebug) console.log(`    [match] direct lookup: "${cleaned}"`);
         return normalizedPokemonLookup.get(cleaned);
     }
     let arrayMatch = allPokemonNames.find(n => n.toLowerCase() === cleaned);
@@ -1654,6 +1778,7 @@ function findClosestPokemonName(name) {
     // 3. Try with underscores replaced by hyphens
     const hyphenated = cleaned.replace(/_/g, '-');
     if (normalizedPokemonLookup.has(hyphenated)) {
+        if (ocrDebug) console.log(`    [match] hyphenated: "${cleaned}" -> "${hyphenated}"`);
         return normalizedPokemonLookup.get(hyphenated);
     }
     arrayMatch = allPokemonNames.find(n => n.toLowerCase() === hyphenated);
@@ -1663,11 +1788,44 @@ function findClosestPokemonName(name) {
     const stripped = cleaned.replace(/[-_]/g, '');
     for (const pokemonName of allPokemonNames) {
         if (pokemonName.toLowerCase().replace(/[-_]/g, '') === stripped) {
+            if (ocrDebug) console.log(`    [match] stripped: "${cleaned}" -> "${stripped}" = ${pokemonName}`);
             return pokemonName;
         }
     }
 
-    // No match found - don't guess with fuzzy matching
+    // 5. Base form match: "wormadam" -> "wormadam-plant", "giratina" -> "giratina-altered", etc.
+    for (const pokemonName of allPokemonNames) {
+        const pokeLower = pokemonName.toLowerCase();
+        if (pokeLower.startsWith(cleaned + '-')) {
+            if (ocrDebug) console.log(`    [match] base form: "${cleaned}" -> "${pokemonName}"`);
+            return pokemonName;
+        }
+    }
+
+    // 6. Fuzzy match using Levenshtein distance (catches OCR errors like "beedril" -> "beedrill")
+    if (cleaned.length >= 3) {
+        let bestMatch = null;
+        let bestDist = Infinity;
+        const maxDist = cleaned.length <= 5 ? 1 : 2; // Stricter for short names
+        for (const pokemonName of allPokemonNames) {
+            const pokeLower = pokemonName.toLowerCase();
+            // Skip if length difference alone exceeds max distance
+            if (Math.abs(pokeLower.length - cleaned.length) > maxDist) continue;
+            const d = levenshtein(cleaned, pokeLower);
+            if (d < bestDist) {
+                bestDist = d;
+                bestMatch = pokemonName;
+            }
+            if (d === 1) break; // Can't do better than distance 1
+        }
+        if (bestMatch && bestDist <= maxDist) {
+            if (ocrDebug) console.log(`    [match] fuzzy (distance ${bestDist}): "${cleaned}" -> "${bestMatch}"`);
+            return bestMatch;
+        }
+    }
+
+    // No match found
+    if (ocrDebug) console.log(`    [no match] "${name}" (cleaned: "${cleaned}")`);
     return null;
 }
 
@@ -1675,28 +1833,40 @@ function parsePokemonFromOCR(text) {
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     const foundPokemon = [];
 
+    if (ocrDebug) console.log(`=== OCR DEBUG: Parsing ${lines.length} lines ===`);
+
     for (const line of lines) {
         const words = line.split(/\s+/);
 
-        // Find the first Pokemon match in this line
+        if (ocrDebug) console.log(`  Line: "${line}" | Words: [${words.map(w => `"${w}"`).join(', ')}]`);
+
+        // Try multi-word combinations first (e.g., "deoxys defense" -> "deoxys-defense")
         let matchFound = null;
-        for (const word of words) {
-            const cleaned = word.toLowerCase();
-            if (cleaned) {
-                const match = findClosestPokemonName(cleaned);
-                if (match) {
-                    matchFound = match;
-                    break;
+        for (let i = 0; i < words.length && !matchFound; i++) {
+            // Try 3-word, 2-word, then 1-word combos starting at position i
+            for (let len = Math.min(3, words.length - i); len >= 1; len--) {
+                const combined = words.slice(i, i + len).join('-').toLowerCase();
+                if (combined) {
+                    const match = findClosestPokemonName(combined);
+                    if (match) {
+                        if (ocrDebug && len > 1) console.log(`    [multi-word] "${words.slice(i, i + len).join(' ')}" -> "${combined}"`);
+                        matchFound = match;
+                        break;
+                    }
                 }
             }
         }
 
         if (matchFound) {
+            if (ocrDebug) console.log(`  -> MATCHED: ${matchFound}`);
             foundPokemon.push(matchFound);
             if (foundPokemon.length >= 6) break;
+        } else {
+            if (ocrDebug) console.log(`  -> NO MATCH on this line`);
         }
     }
 
+    if (ocrDebug) console.log(`=== OCR DEBUG: Found ${foundPokemon.length} Pokemon: [${foundPokemon.join(', ')}] ===`);
     return foundPokemon;
 }
 
@@ -1748,8 +1918,9 @@ async function determineWinner() {
     // Detect and display achievements
     const team1Data = getTeamData('team1');
     const team2Data = getTeamData('team2');
-    currentBattleAchievements.team1 = detectAchievements(team1Data, team1IsWinner);
-    currentBattleAchievements.team2 = detectAchievements(team2Data, team2IsWinner);
+    const isTie = !team1IsWinner && !team2IsWinner;
+    currentBattleAchievements.team1 = detectAchievements(team1Data, team1IsWinner, isTie);
+    currentBattleAchievements.team2 = detectAchievements(team2Data, team2IsWinner, isTie);
 
     const crossTeamAchievements = detectCrossTeamAchievements(team1Data, team2Data);
     const allAchievements = [
@@ -1811,6 +1982,10 @@ async function saveCurrentBattle() {
     // Detect cross-team achievements for saving
     const crossTeamAchievements = detectCrossTeamAchievements(team1Data, team2Data);
 
+    // Detect GOAT/WOAT achievements (needs full history including this battle)
+    const historyBeforeSave = JSON.parse(localStorage.getItem('battleHistory')) || [];
+    const goatWoatAchievements = detectGoatWoatAchievements(team1Data, team2Data, historyBeforeSave);
+
     const result = {
         id: Date.now(),
         team1: team1Data,
@@ -1818,16 +1993,25 @@ async function saveCurrentBattle() {
         winner: winner,
         date: new Date().toISOString(),
         achievements: {
-            team1: currentBattleAchievements.team1,
-            team2: currentBattleAchievements.team2,
+            team1: [...currentBattleAchievements.team1, ...goatWoatAchievements.team1],
+            team2: [...currentBattleAchievements.team2, ...goatWoatAchievements.team2],
             crossTeam: crossTeamAchievements
         }
     };
 
+    // Show GOAT/WOAT achievements if any were earned
+    const allGoatWoat = [...goatWoatAchievements.team1, ...goatWoatAchievements.team2];
+    if (allGoatWoat.length > 0) {
+        const uniqueGoatWoat = filterTieredAchievements(deduplicateAchievements(allGoatWoat));
+        if (uniqueGoatWoat.length > 0) {
+            setTimeout(() => showAchievementPopup(uniqueGoatWoat), 600);
+        }
+    }
+
     // Reset achievements for next battle
     currentBattleAchievements = { team1: [], team2: [] };
 
-    const history = JSON.parse(localStorage.getItem('battleHistory')) || [];
+    const history = historyBeforeSave;
     history.push(result);
     localStorage.setItem('battleHistory', JSON.stringify(history));
 
@@ -2441,14 +2625,14 @@ function scrollToBattle(matchId) {
 }
 
 async function loadAllPokemonNames() {
-    const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1500");
+    const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=2000");
     const data = await res.json();
 
-    // Filter out fan-made Pokemon (ID >= 10000) except Deoxys variants
+    // Include base Pokemon (ID < 10000) and official alternate forms (10000-10300 range)
+    // IDs 10001-10300 are real alternate forms (megas, form variants like shaymin-sky, rotom-wash, etc.)
     const filtered = data.results.filter(p => {
         const id = parseInt(p.url.split('/').filter(Boolean).pop());
-        const isDeoxys = p.name.startsWith('deoxys');
-        return id < 10000 || isDeoxys;
+        return id < 10300;
     });
 
     allPokemonNames = filtered.map(p => capitalize(p.name));
@@ -2616,11 +2800,66 @@ async function initTesseractWorker() {
         tesseractWorker = await Tesseract.createWorker('eng');
         await tesseractWorker.setParameters({
             tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz- ',
+            tessedit_pageseg_mode: '6', // Assume uniform block of text
         });
         console.log('Tesseract worker initialized');
     } catch (error) {
         console.error('Failed to initialize Tesseract worker:', error);
     }
+}
+
+// Preprocess image for better OCR accuracy: upscale, grayscale, binarize
+function preprocessForOCR(imageBlob) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Upscale 2x for better OCR on small text
+            const scale = 2;
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+
+            // Draw upscaled with grayscale + high contrast
+            ctx.filter = 'grayscale(100%) contrast(200%)';
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            ctx.filter = 'none';
+
+            // Manual binarization for cleaner text
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const threshold = 128;
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                const val = gray >= threshold ? 255 : 0;
+                data[i] = data[i + 1] = data[i + 2] = val;
+            }
+            ctx.putImageData(imageData, 0, 0);
+
+            canvas.toBlob(resolve, 'image/png');
+            URL.revokeObjectURL(img.src);
+        };
+        img.src = URL.createObjectURL(imageBlob);
+    });
+}
+
+// Levenshtein distance for fuzzy matching OCR errors against known Pokemon names
+function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    const dp = Array.from({ length: m + 1 }, (_, i) => i);
+    for (let j = 1; j <= n; j++) {
+        let prev = dp[0];
+        dp[0] = j;
+        for (let i = 1; i <= m; i++) {
+            const temp = dp[i];
+            dp[i] = a[i - 1] === b[j - 1]
+                ? prev
+                : 1 + Math.min(prev, dp[i], dp[i - 1]);
+            prev = temp;
+        }
+    }
+    return dp[m];
 }
 
 // Load history after other scripts have set up the page
