@@ -13,22 +13,21 @@ import { calcBest, calcAvg } from './stats.js';
 let isMultiplayerActive = false;
 let myFinished = false;
 let oppFinished = false;
-let showNewScrambleRef = null;
 
-// Countdown + ready state
 let myReady = false;
 let oppReady = false;
 let countdownInterval = null;
 let countdownActive = false;
 let timerControl = null;
 
-// Opponent local timer interpolation
 let oppTimerStart = null;
 let oppAnimFrame = null;
 
-// In-memory stats
 let mySolveTimes = [];
 let oppSolveTimes = [];
+let roundResults = [];
+let myName = '';
+let oppName = '';
 
 const dom = {
   modal: document.getElementById('mp-modal'),
@@ -54,6 +53,10 @@ const dom = {
   splitStatusOpp: document.getElementById('split-status-opp'),
   splitStatsYou: document.getElementById('split-stats-you'),
   splitStatsOpp: document.getElementById('split-stats-opp'),
+  // Multiplayer history
+  mpHistoryPanel: document.getElementById('mp-history-panel'),
+  mpHistoryHeader: document.getElementById('mp-history-header'),
+  mpHistoryList: document.getElementById('mp-history-list'),
   // Countdown
   countdownOverlay: document.getElementById('countdown-overlay'),
   countdownText: document.getElementById('countdown-text'),
@@ -69,8 +72,6 @@ export function setTimerControl(control) {
 }
 
 export function initMultiplayerUI(showNewScrambleFn) {
-  showNewScrambleRef = showNewScrambleFn;
-
   // New Round button (P1 only)
   dom.newRoundBtn.addEventListener('click', async () => {
     const scramble = await broadcastNewScramble();
@@ -143,22 +144,22 @@ export function initMultiplayerUI(showNewScrambleFn) {
 
   // Realtime event handlers
   onEvent('onOpponentJoined', (payload) => {
-    const { room } = getRoomInfo();
+    const { room, playerNumber } = getRoomInfo();
+    // Only P1 handles this — P2 enters via the join button handler
+    if (playerNumber !== 1) return;
     dom.modal.style.display = 'none';
-    const myName = dom.nameInput.value.trim();
-    enterMultiplayerMode(myName, payload.name, room.scramble);
+    const enteredName = dom.nameInput.value.trim();
+    enterMultiplayerMode(enteredName, payload.name, room.scramble);
   });
 
   onEvent('onOpponentTimerUpdate', (payload) => {
     updateOpponentDisplay(payload);
     if (payload.state === 'ready') {
       oppReady = true;
-      dom.splitStatusOpp.textContent = 'Ready!';
       checkBothReady();
     } else if (payload.state === 'mp-released') {
       handleOpponentReleased();
-    }
-    if (payload.state === 'stopped') {
+    } else if (payload.state === 'stopped') {
       stopOppLocalTimer();
       oppFinished = true;
       oppSolveTimes.push(payload.elapsed);
@@ -187,7 +188,7 @@ export function initMultiplayerUI(showNewScrambleFn) {
 
   onEvent('onCountdownStart', () => {
     countdownActive = true;
-    showCountdownOverlay();
+    dom.countdownOverlay.style.display = 'flex';
   });
 
   onEvent('onCountdownTick', ({ value }) => {
@@ -207,8 +208,6 @@ export function initMultiplayerUI(showNewScrambleFn) {
   }
 }
 
-// --- Countdown ---
-
 function checkBothReady() {
   if (!myReady || !oppReady) return;
   const { playerNumber } = getRoomInfo();
@@ -220,7 +219,7 @@ function checkBothReady() {
 
 function startCountdown() {
   countdownActive = true;
-  showCountdownOverlay();
+  dom.countdownOverlay.style.display = 'flex';
   let tick = 5;
   updateCountdownDisplay(tick);
   broadcastCountdownTick(tick);
@@ -235,10 +234,6 @@ function startCountdown() {
       finishCountdown();
     }
   }, 1000);
-}
-
-function showCountdownOverlay() {
-  dom.countdownOverlay.style.display = 'flex';
 }
 
 function updateCountdownDisplay(value) {
@@ -264,34 +259,31 @@ function finishCountdown() {
   }, 500);
 }
 
+function flashStatus(element, message) {
+  element.textContent = message;
+  element.style.color = '#ff5252';
+  setTimeout(() => {
+    element.textContent = '';
+    element.style.color = '';
+  }, 2000);
+}
+
 function cancelCountdownWithMessage(message) {
   clearCountdown();
   myReady = false;
   oppReady = false;
-  // Flash the message briefly in both status fields
-  dom.splitStatusYou.textContent = message;
-  dom.splitStatusYou.style.color = '#ff5252';
+  flashStatus(dom.splitStatusYou, message);
   dom.splitStatusOpp.textContent = '';
-  setTimeout(() => {
-    dom.splitStatusYou.textContent = '';
-    dom.splitStatusYou.style.color = '';
-  }, 2000);
 }
 
 function handleOpponentReleased() {
   oppReady = false;
   if (countdownActive) {
-    // P1 drives the countdown, so if we're P1 we need to stop the interval
     clearCountdown();
     myReady = false;
     if (timerControl) timerControl.resetToIdle();
-    dom.splitStatusOpp.textContent = 'Released too early!';
-    dom.splitStatusOpp.style.color = '#ff5252';
+    flashStatus(dom.splitStatusOpp, 'Released too early!');
     dom.splitStatusYou.textContent = '';
-    setTimeout(() => {
-      dom.splitStatusOpp.textContent = '';
-      dom.splitStatusOpp.style.color = '';
-    }, 2000);
   } else {
     dom.splitStatusOpp.textContent = '';
   }
@@ -306,8 +298,6 @@ function clearCountdown() {
   dom.countdownOverlay.style.display = 'none';
   dom.countdownText.style.color = '#ffd700';
 }
-
-// --- Opponent local timer interpolation ---
 
 function startOppLocalTimer() {
   stopOppLocalTimer();
@@ -329,8 +319,6 @@ function stopOppLocalTimer() {
   oppTimerStart = null;
 }
 
-// --- State change from app.js ---
-
 export function handleMyStateChange(state) {
   if (state === 'ready') {
     myReady = true;
@@ -338,7 +326,6 @@ export function handleMyStateChange(state) {
     checkBothReady();
   } else if (state === 'mp-released') {
     if (countdownActive) {
-      // I released during countdown
       cancelCountdownWithMessage('Released too early!');
     } else {
       myReady = false;
@@ -351,8 +338,6 @@ export function recordMySolve(elapsed) {
   mySolveTimes.push(elapsed);
   updateMultiplayerStats();
 }
-
-// --- Stats ---
 
 function updateMultiplayerStats() {
   renderStatsInto(dom.splitStatsYou, mySolveTimes);
@@ -376,10 +361,38 @@ function renderStatsInto(container, times) {
   `;
 }
 
-// --- Multiplayer mode lifecycle ---
+function renderMpHistory() {
+  if (roundResults.length === 0) {
+    dom.mpHistoryPanel.style.display = 'none';
+    return;
+  }
+  dom.mpHistoryPanel.style.display = '';
+  dom.mpHistoryHeader.innerHTML = `
+    <span class="mp-history-num">#</span>
+    <span class="mp-history-header-name">${myName}</span>
+    <span class="mp-history-vs">vs</span>
+    <span class="mp-history-header-name">${oppName}</span>
+  `;
+  dom.mpHistoryList.innerHTML = roundResults
+    .slice()
+    .reverse()
+    .map((r, i) => {
+      const num = roundResults.length - i;
+      const myWon = r.myTime <= r.oppTime;
+      return `<div class="mp-history-row">
+        <span class="mp-history-num">${num}</span>
+        <span class="mp-history-time ${myWon ? 'winner' : 'loser'}">${formatTime(r.myTime)}</span>
+        <span class="mp-history-vs">vs</span>
+        <span class="mp-history-time ${myWon ? 'loser' : 'winner'}">${formatTime(r.oppTime)}</span>
+      </div>`;
+    })
+    .join('');
+}
 
-function enterMultiplayerMode(myName, opponentName, scramble) {
+function enterMultiplayerMode(enteredMyName, opponentNameVal, scramble) {
   isMultiplayerActive = true;
+  myName = enteredMyName;
+  oppName = opponentNameVal;
   if (timerControl) timerControl.setMultiplayerMode(true);
 
   dom.multiplayerBtn.textContent = 'Leave';
@@ -393,7 +406,7 @@ function enterMultiplayerMode(myName, opponentName, scramble) {
   if (dom.hint) dom.hint.style.display = 'none';
 
   dom.splitNameYou.textContent = myName;
-  dom.splitNameOpp.textContent = opponentName;
+  dom.splitNameOpp.textContent = oppName;
   dom.splitNameOpp.style.color = '';
 
   const moves = scramble.split(' ');
@@ -409,6 +422,7 @@ function handleLeave() {
   oppReady = false;
   mySolveTimes = [];
   oppSolveTimes = [];
+  roundResults = [];
   clearCountdown();
   stopOppLocalTimer();
   if (timerControl) {
@@ -422,6 +436,8 @@ function handleLeave() {
   dom.newRoundBtn.style.display = 'none';
   dom.splitStatsYou.innerHTML = '';
   dom.splitStatsOpp.innerHTML = '';
+  dom.mpHistoryPanel.style.display = 'none';
+  dom.mpHistoryList.innerHTML = '';
 
   dom.soloTimer.style.display = '';
   dom.splitTimer.style.display = 'none';
@@ -430,25 +446,36 @@ function handleLeave() {
 }
 
 function updateOpponentDisplay({ state, elapsed }) {
-  if (state === 'stopped') {
-    dom.splitDisplayOpp.textContent = formatTime(elapsed);
-    dom.splitStatusOpp.textContent = 'Done!';
-    dom.splitDisplayOpp.style.color = '#00e676';
-  } else if (state === 'running') {
-    // Local interpolation handles the display — ignore network updates
-  } else if (state === 'holding') {
-    dom.splitDisplayOpp.style.color = '#ffd700';
-    dom.splitStatusOpp.textContent = '';
-  } else if (state === 'ready') {
-    dom.splitDisplayOpp.style.color = '#00e676';
-    // Status set in onOpponentTimerUpdate handler
-  } else if (state === 'mp-released') {
-    dom.splitDisplayOpp.style.color = '#ffffff';
-    // Status set in handleOpponentReleased
-  } else {
-    dom.splitDisplayOpp.style.color = '#ffffff';
-    dom.splitStatusOpp.textContent = '';
+  switch (state) {
+    case 'stopped':
+      dom.splitDisplayOpp.textContent = formatTime(elapsed);
+      dom.splitStatusOpp.textContent = 'Done!';
+      dom.splitDisplayOpp.style.color = '#00e676';
+      break;
+    case 'running':
+      break;
+    case 'holding':
+      dom.splitDisplayOpp.style.color = '#ffd700';
+      dom.splitStatusOpp.textContent = '';
+      break;
+    case 'ready':
+      dom.splitDisplayOpp.style.color = '#00e676';
+      dom.splitStatusOpp.textContent = 'Ready!';
+      break;
+    case 'mp-released':
+      dom.splitDisplayOpp.style.color = '#ffffff';
+      break;
+    default:
+      dom.splitDisplayOpp.style.color = '#ffffff';
+      dom.splitStatusOpp.textContent = '';
   }
+}
+
+function resetPlayerDisplay(displayEl, statusEl) {
+  displayEl.textContent = '0.00';
+  displayEl.style.color = '#ffffff';
+  statusEl.textContent = '';
+  statusEl.style.color = '';
 }
 
 function resetRoundState() {
@@ -458,19 +485,17 @@ function resetRoundState() {
   oppReady = false;
   stopOppLocalTimer();
   dom.newRoundBtn.style.display = 'none';
-  dom.splitDisplayYou.textContent = '0.00';
-  dom.splitDisplayYou.style.color = '#ffffff';
-  dom.splitDisplayOpp.textContent = '0.00';
-  dom.splitDisplayOpp.style.color = '#ffffff';
-  dom.splitStatusYou.textContent = '';
-  dom.splitStatusYou.style.color = '';
-  dom.splitStatusOpp.textContent = '';
-  dom.splitStatusOpp.style.color = '';
+  resetPlayerDisplay(dom.splitDisplayYou, dom.splitStatusYou);
+  resetPlayerDisplay(dom.splitDisplayOpp, dom.splitStatusOpp);
   if (timerControl) timerControl.resetToIdle();
 }
 
 function checkBothFinished() {
   if (myFinished && oppFinished) {
+    const myTime = mySolveTimes[mySolveTimes.length - 1];
+    const oppTime = oppSolveTimes[oppSolveTimes.length - 1];
+    roundResults.push({ myTime, oppTime });
+    renderMpHistory();
     const { playerNumber } = getRoomInfo();
     if (playerNumber === 1) {
       dom.newRoundBtn.style.display = '';
