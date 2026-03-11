@@ -1,5 +1,5 @@
 import { formatTime, formatDateHeader, formatDelta } from './utils.js';
-import { loadSolves, saveSolves, loadSessionMeta, saveSessionMeta, getActiveSession, getSessionSolves } from './storage.js';
+import { getSessionSolves, getActiveSession, importSolves } from './storage.js';
 
 function createDeltaElement(solveTime, reference) {
   const el = document.createElement('span');
@@ -121,8 +121,8 @@ function parseCSVLine(line) {
   return fields;
 }
 
-export function exportSolves() {
-  const solves = getSessionSolves();
+export async function exportSolves() {
+  const solves = await getSessionSolves();
   if (solves.length === 0) {
     alert('No solves to export.');
     return;
@@ -145,9 +145,9 @@ export function exportSolves() {
   URL.revokeObjectURL(url);
 }
 
-export function importSolves(file, onComplete) {
+export function importSolvesFromFile(file, onComplete) {
   const reader = new FileReader();
-  reader.onload = (event) => {
+  reader.onload = async (event) => {
     const lines = event.target.result.trim().split('\n');
 
     if (lines.length < 2) {
@@ -161,10 +161,8 @@ export function importSolves(file, onComplete) {
       return;
     }
 
-    const existing = loadSolves();
-    const existingKeys = new Set(existing.map(s => `${s.time}_${s.date}`));
-    const meta = loadSessionMeta();
-    let imported = 0;
+    const parsedSolves = [];
+    const activeSession = getActiveSession();
 
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
@@ -178,25 +176,18 @@ export function importSolves(file, onComplete) {
 
       const scramble = fields[1];
       const date = fields[2] || new Date().toISOString();
-      const session = fields[3] || getActiveSession();
-      const key = `${time}_${date}`;
+      const session = fields[3] || activeSession;
 
-      if (existingKeys.has(key)) continue;
-
-      existing.unshift({ id: crypto.randomUUID(), time, scramble, date, session });
-
-      if (!meta.sessions.includes(session)) {
-        meta.sessions.push(session);
-      }
-
-      existingKeys.add(key);
-      imported++;
+      parsedSolves.push({ time, scramble, date, session });
     }
 
-    saveSolves(existing);
-    saveSessionMeta(meta);
-    onComplete();
-    alert(`Imported ${imported} solve(s).`);
+    try {
+      const count = await importSolves(parsedSolves);
+      onComplete();
+      alert(`Imported ${typeof count === 'number' ? count : parsedSolves.length} solve(s).`);
+    } catch (e) {
+      alert('Import failed: ' + (e.message || 'Unknown error'));
+    }
   };
 
   reader.readAsText(file);

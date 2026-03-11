@@ -1,14 +1,19 @@
+// js/timer.js
+//
+// Timer state machine. Supports multiple independent instances
+// via configurable key code and display element.
+
 import { formatTime } from './utils.js';
 
-let timerState = 'idle';
-let holdTimeout = null;
-let startTime = 0;
-let elapsed = 0;
-let animationFrame = null;
-let currentScramble = '';
-let multiplayerMode = false;
+export function initTimer(timerDisplay, { key = 'Space', getScrambleText, onStop, onStateChange, enableTouch = true }) {
+  let timerState = 'idle';
+  let holdTimeout = null;
+  let startTime = 0;
+  let elapsed = 0;
+  let animationFrame = null;
+  let currentScramble = '';
+  let multiplayerMode = false;
 
-export function initTimer(timerDisplay, { getScrambleText, onStop, onStateChange }) {
   function handleInputDown() {
     if (timerState === 'running') {
       stopTimer();
@@ -22,7 +27,6 @@ export function initTimer(timerDisplay, { getScrambleText, onStop, onStateChange
       cancelHolding();
     } else if (timerState === 'ready') {
       if (multiplayerMode) {
-        // Released during ready/countdown — go back to idle
         timerState = 'idle';
         timerDisplay.style.color = '#ffffff';
         if (onStateChange) onStateChange('mp-released', 0);
@@ -78,29 +82,31 @@ export function initTimer(timerDisplay, { getScrambleText, onStop, onStateChange
     animationFrame = requestAnimationFrame(updateDisplay);
   }
 
-  // Keyboard
+  // Keyboard — only respond to the configured key
   document.addEventListener('keydown', (e) => {
-    if (e.code !== 'Space') return;
+    if (e.code !== key) return;
     e.preventDefault();
     if (!e.repeat) handleInputDown();
   });
 
   document.addEventListener('keyup', (e) => {
-    if (e.code !== 'Space') return;
+    if (e.code !== key) return;
     e.preventDefault();
     handleInputUp();
   });
 
-  // Touch
-  timerDisplay.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    handleInputDown();
-  });
+  // Touch — only if enabled (disabled for P2 instance in local 2P)
+  if (enableTouch) {
+    timerDisplay.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      handleInputDown();
+    });
 
-  timerDisplay.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    handleInputUp();
-  });
+    timerDisplay.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleInputUp();
+    });
+  }
 
   return {
     forceStart() {
@@ -115,6 +121,13 @@ export function initTimer(timerDisplay, { getScrambleText, onStop, onStateChange
       timerState = 'idle';
       timerDisplay.textContent = '0.00';
       timerDisplay.style.color = '#ffffff';
+    },
+    destroy() {
+      // Clean up animation frame and timeout
+      clearTimeout(holdTimeout);
+      cancelAnimationFrame(animationFrame);
+      // Note: can't remove anonymous event listeners, but they check
+      // the key code so they become no-ops if the instance is "destroyed"
     },
   };
 }

@@ -1,9 +1,11 @@
 // js/multiplayer.js
 
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase-config.js';
+import { getClient } from './auth.js';
 import { generateScramble } from './scramble.js';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+function getSupabase() {
+  return getClient();
+}
 
 let currentRoom = null;
 let currentChannel = null;
@@ -23,7 +25,7 @@ export async function createRoom(playerName) {
   const code = generateRoomCode();
   const scramble = generateScramble().join(' ');
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('rooms')
     .insert({ code, scramble, player1_name: playerName, status: 'waiting' })
     .select()
@@ -39,7 +41,7 @@ export async function createRoom(playerName) {
 
 export async function joinRoom(code, playerName) {
   // Fetch room
-  const { data: room, error: fetchErr } = await supabase
+  const { data: room, error: fetchErr } = await getSupabase()
     .from('rooms')
     .select()
     .eq('code', code.toUpperCase())
@@ -49,7 +51,7 @@ export async function joinRoom(code, playerName) {
   if (room.status !== 'waiting') throw new Error('Room is already full');
 
   // Update room with player 2
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('rooms')
     .update({ player2_name: playerName, status: 'active' })
     .eq('id', room.id)
@@ -73,7 +75,7 @@ export async function joinRoom(code, playerName) {
 }
 
 async function joinChannel(code) {
-  currentChannel = supabase.channel(`room:${code}`, {
+  currentChannel = getSupabase().channel(`room:${code}`, {
     config: { broadcast: { self: false } },
   });
 
@@ -113,7 +115,7 @@ export async function broadcastNewScramble() {
   const scramble = generateScramble().join(' ');
 
   // Update room in DB
-  await supabase
+  await getSupabase()
     .from('rooms')
     .update({ scramble, player1_time: null, player2_time: null })
     .eq('id', currentRoom.id);
@@ -148,7 +150,7 @@ export function broadcastCountdownTick(value) {
 export async function saveFinishTime(timeMs) {
   if (!currentRoom) return;
   const col = playerNumber === 1 ? 'player1_time' : 'player2_time';
-  await supabase
+  await getSupabase()
     .from('rooms')
     .update({ [col]: timeMs })
     .eq('id', currentRoom.id);
@@ -161,7 +163,7 @@ export async function leaveRoom() {
       event: 'player_left',
       payload: { player: playerNumber },
     });
-    supabase.removeChannel(currentChannel);
+    getSupabase().removeChannel(currentChannel);
   }
   currentRoom = null;
   currentChannel = null;

@@ -7,6 +7,9 @@ import {
 } from './multiplayer.js';
 import { formatTime, formatOrDash } from './utils.js';
 import { calcBest, calcAvg } from './stats.js';
+import { isLoggedIn, getDisplayName } from './auth.js';
+import { addSolveWithContext, getActiveSessionAsync } from './storage.js';
+import { startLocal2P, leaveLocal2P, isLocal2PActive, initLocal2P } from './local-2p-ui.js';
 
 let showScrambleFn = null;
 let isMultiplayerActive = false;
@@ -82,16 +85,18 @@ export function initMultiplayerUI(showNewScrambleFn) {
     }
   });
 
-  // Open modal
+  // Open modal / mode selector
   dom.multiplayerBtn.addEventListener('click', () => {
     if (isMultiplayerActive) {
       handleLeave();
       return;
     }
-    dom.modal.style.display = 'flex';
-    dom.modalBody.style.display = '';
-    dom.modalWaiting.style.display = 'none';
-    dom.error.textContent = '';
+    if (isLocal2PActive()) {
+      leaveLocal2P();
+      return;
+    }
+    // Show mode selector
+    showModeSelector();
   });
 
   // Close modal
@@ -207,6 +212,9 @@ export function initMultiplayerUI(showNewScrambleFn) {
     dom.codeInput.value = roomCode.toUpperCase();
     window.history.replaceState({}, '', window.location.pathname);
   }
+
+  // Initialize local 2P module
+  initLocal2P(showNewScrambleFn);
 }
 
 function checkBothReady() {
@@ -335,9 +343,20 @@ export function handleMyStateChange(state) {
   }
 }
 
-export function recordMySolve(elapsed) {
+export async function recordMySolve(elapsed) {
   mySolveTimes.push(elapsed);
   updateMultiplayerStats();
+
+  // Save to account if logged in (remote 2P)
+  if (isLoggedIn() && !isLocal2PActive()) {
+    try {
+      const scramble = document.getElementById('scramble-text')?.textContent || '';
+      const session = await getActiveSessionAsync();
+      await addSolveWithContext(elapsed, scramble, session, 'remote_2p');
+    } catch (e) {
+      console.warn('Failed to save remote 2P solve:', e);
+    }
+  }
 }
 
 function updateMultiplayerStats() {
@@ -444,6 +463,71 @@ function handleLeave() {
   dom.splitTimer.style.display = 'none';
   dom.statsPanel.style.display = '';
   dom.sessionBar.style.display = '';
+}
+
+function showModeSelector() {
+  const selector = document.getElementById('mode-selector-modal');
+  if (!selector) {
+    // Fallback: go straight to online 2P if modal not in DOM
+    openOnline2PModal();
+    return;
+  }
+  selector.style.display = 'flex';
+
+  const onlineBtn = document.getElementById('mode-online-btn');
+  const localBtn = document.getElementById('mode-local-btn');
+  const closeBtn = document.getElementById('mode-selector-close');
+
+  // Hide local 2P on touch-only devices
+  const isTouchOnly = 'ontouchstart' in window && !window.matchMedia('(pointer: fine)').matches;
+  if (localBtn) {
+    localBtn.style.display = isTouchOnly ? 'none' : '';
+  }
+
+  // Clone to remove old listeners
+  const newOnlineBtn = onlineBtn.cloneNode(true);
+  onlineBtn.parentNode.replaceChild(newOnlineBtn, onlineBtn);
+  const newLocalBtn = localBtn.cloneNode(true);
+  localBtn.parentNode.replaceChild(newLocalBtn, localBtn);
+  const newCloseBtn = closeBtn.cloneNode(true);
+  closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+
+  newOnlineBtn.addEventListener('click', () => {
+    selector.style.display = 'none';
+    openOnline2PModal();
+  });
+
+  newLocalBtn.addEventListener('click', () => {
+    selector.style.display = 'none';
+    if (!isLoggedIn()) {
+      alert('You must be logged in to use Local 2P.');
+      return;
+    }
+    startLocal2P();
+  });
+
+  newCloseBtn.addEventListener('click', () => {
+    selector.style.display = 'none';
+  });
+
+  selector.addEventListener('click', (e) => {
+    if (e.target === selector) selector.style.display = 'none';
+  });
+}
+
+function openOnline2PModal() {
+  dom.modal.style.display = 'flex';
+  dom.modalBody.style.display = '';
+  dom.modalWaiting.style.display = 'none';
+  dom.error.textContent = '';
+
+  // Auto-populate name from display name
+  if (isLoggedIn() && dom.nameInput) {
+    const name = getDisplayName();
+    if (name && !dom.nameInput.value.trim()) {
+      dom.nameInput.value = name;
+    }
+  }
 }
 
 function updateOpponentDisplay({ state, elapsed }) {

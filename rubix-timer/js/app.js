@@ -3,14 +3,17 @@ import { generateScramble } from './scramble.js';
 import { applyScramble } from './cube-state.js';
 import { initCubeRenderer, updateCubeColors } from './cube-renderer.js';
 import {
-  addSolve, deleteSolve, loadSolves, saveSolves,
+  addSolve, deleteSolve,
   loadSessionMeta, getActiveSession, setActiveSession,
   createSession, renameSession, deleteSession,
-  getSessionSolves, migrateData
+  getSessionSolves, deleteSessionSolves, migrateData,
+  getPendingSyncs, clearPendingSyncs, importSolves as storageImportSolves,
 } from './storage.js';
+import { isLoggedIn } from './auth.js';
+import { initAuthUI, startAuthListener } from './auth-ui.js';
 import { calcBest, calcAvg, getVsBestColor } from './stats.js';
 import { renderSpeedChart } from './chart.js';
-import { renderHistoryList, exportSolves, importSolves } from './history.js';
+import { renderHistoryList, exportSolves, importSolvesFromFile } from './history.js';
 import { initTimer } from './timer.js';
 import { initMultiplayerUI, isMultiplayer, broadcastTimerUpdate, broadcastNewScramble, saveFinishTime, markMyFinished, setTimerControl, handleMyStateChange, recordMySolve } from './multiplayer-ui.js';
 
@@ -56,9 +59,10 @@ function getCurrentScrambleText() {
 
 // === UI Updates ===
 
-function updateHintVisibility() {
+async function updateHintVisibility() {
   if (dom.hint) {
-    dom.hint.style.display = getSessionSolves().length > 0 ? 'none' : '';
+    const solves = await getSessionSolves();
+    dom.hint.style.display = solves.length > 0 ? 'none' : '';
   }
 }
 
@@ -94,16 +98,16 @@ function updateVsBest(solves) {
   dom.vsBest.style.color = delta.diff === 0 ? '#ffd700' : getVsBestColor(delta.diff);
 }
 
-function renderStats() {
-  const solves = getSessionSolves();
+async function renderStats() {
+  const solves = await getSessionSolves();
   const { ao3, ao5 } = updateStatValues(solves);
   updateVsBest(solves);
   renderSpeedChart(solves, dom.chartCanvas, dom.chartContainer);
   renderHistoryList(dom.historyList, solves, ao3, ao5);
 }
 
-function renderSessionBar() {
-  const meta = loadSessionMeta();
+async function renderSessionBar() {
+  const meta = await loadSessionMeta();
   dom.sessionSelect.innerHTML = '';
   meta.sessions.forEach(name => {
     const opt = document.createElement('option');
@@ -113,15 +117,16 @@ function renderSessionBar() {
     dom.sessionSelect.appendChild(opt);
   });
 
+  const solves = await getSessionSolves();
   const today = new Date().toISOString().slice(0, 10);
-  const todayCount = getSessionSolves().filter(s => s.date.slice(0, 10) === today).length;
+  const todayCount = solves.filter(s => s.date?.slice(0, 10) === today).length;
   dom.sessionToday.textContent = todayCount > 0 ? `Today: ${todayCount}` : '';
 }
 
-function refreshAll() {
-  renderSessionBar();
-  renderStats();
-  updateHintVisibility();
+async function refreshAll() {
+  await renderSessionBar();
+  await renderStats();
+  await updateHintVisibility();
 }
 
 // === Timer Integration ===
@@ -131,7 +136,7 @@ const BROADCAST_INTERVAL = 100; // ms — throttle to ~10 updates/sec
 
 const timerControl = initTimer(dom.timerDisplay, {
   getScrambleText: getCurrentScrambleText,
-  onStop(elapsed, scramble) {
+  async onStop(elapsed, scramble) {
     if (isMultiplayer()) {
       saveFinishTime(elapsed);
       dom.splitDisplayYou.textContent = formatTime(elapsed);
@@ -141,9 +146,9 @@ const timerControl = initTimer(dom.timerDisplay, {
       markMyFinished();
     } else {
       showNewScramble();
-      addSolve(elapsed, scramble);
-      renderStats();
-      renderSessionBar();
+      await addSolve(elapsed, scramble);
+      await renderStats();
+      await renderSessionBar();
       if (dom.hint) dom.hint.style.display = 'none';
     }
   },
@@ -167,15 +172,15 @@ setTimerControl(timerControl);
 
 // === Event Listeners ===
 
-dom.historyList.addEventListener('click', (e) => {
+dom.historyList.addEventListener('click', async (e) => {
   const btn = e.target.closest('.history-delete');
   if (btn) {
-    deleteSolve(btn.dataset.id);
-    renderStats();
+    await deleteSolve(btn.dataset.id);
+    await renderStats();
   }
 });
 
-document.getElementById('export-btn').addEventListener('click', exportSolves);
+document.getElementById('export-btn').addEventListener('click', () => exportSolves());
 
 document.getElementById('import-btn').addEventListener('click', () => {
   dom.importFile.click();
@@ -183,45 +188,49 @@ document.getElementById('import-btn').addEventListener('click', () => {
 
 dom.importFile.addEventListener('change', (e) => {
   const file = e.target.files[0];
-  if (file) importSolves(file, refreshAll);
+  if (file) importSolvesFromFile(file, refreshAll);
   e.target.value = '';
 });
 
-document.getElementById('clear-all-btn').addEventListener('click', () => {
+document.getElementById('clear-all-btn').addEventListener('click', async () => {
   if (confirm('Delete all solves in this session?')) {
-    const solves = loadSolves().filter(s => s.session !== getActiveSession());
-    saveSolves(solves);
-    renderStats();
+    const active = isLoggedIn()
+      ? (await loadSessionMeta()).activeSession
+      : getActiveSession();
+    await deleteSessionSolves(active);
+    await renderStats();
   }
 });
 
-dom.sessionSelect.addEventListener('change', (e) => {
-  setActiveSession(e.target.value);
-  refreshAll();
+dom.sessionSelect.addEventListener('change', async (e) => {
+  await setActiveSession(e.target.value);
+  await refreshAll();
 });
 
-document.getElementById('session-add').addEventListener('click', () => {
+document.getElementById('session-add').addEventListener('click', async () => {
   const name = prompt('Session name:');
   if (name && name.trim()) {
-    createSession(name.trim());
-    refreshAll();
+    await createSession(name.trim());
+    await refreshAll();
   }
 });
 
-document.getElementById('session-rename').addEventListener('click', () => {
-  const current = getActiveSession();
+document.getElementById('session-rename').addEventListener('click', async () => {
+  const meta = await loadSessionMeta();
+  const current = meta.activeSession;
   const name = prompt('Rename session:', current);
   if (name && name.trim() && name.trim() !== current) {
-    renameSession(current, name.trim());
-    refreshAll();
+    await renameSession(current, name.trim());
+    await refreshAll();
   }
 });
 
-document.getElementById('session-delete').addEventListener('click', () => {
-  const current = getActiveSession();
+document.getElementById('session-delete').addEventListener('click', async () => {
+  const meta = await loadSessionMeta();
+  const current = meta.activeSession;
   if (confirm(`Delete session "${current}" and all its solves?`)) {
-    deleteSession(current);
-    refreshAll();
+    await deleteSession(current);
+    await refreshAll();
   }
 });
 
@@ -247,11 +256,37 @@ window.showNewScramble = async () => {
   }
 };
 
-// === Initialization ===
+// --- Initialization ---
+async function init() {
+  migrateData();
 
-migrateData();
-showNewScramble();
-renderStats();
-renderSessionBar();
-updateHintVisibility();
-initMultiplayerUI(showNewScramble);
+  // Initialize auth — check for existing session
+  await startAuthListener();
+  initAuthUI(refreshAll);
+
+  // Flush pending syncs if logged in
+  if (isLoggedIn()) {
+    await flushPendingSyncs();
+  }
+
+  showNewScramble();
+  await renderStats();
+  await renderSessionBar();
+  await updateHintVisibility();
+  initMultiplayerUI(showNewScramble);
+}
+
+async function flushPendingSyncs() {
+  const pending = getPendingSyncs();
+  if (pending.length === 0) return;
+
+  try {
+    await storageImportSolves(pending);
+    clearPendingSyncs();
+  } catch (e) {
+    // Leave pending for next load
+    console.warn('Failed to flush pending syncs:', e);
+  }
+}
+
+init();
