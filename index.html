@@ -31,14 +31,16 @@
           letter-spacing: 2px;
           margin-bottom: 1rem;
       }
-      .subtitle {
+      .profile-link {
           font-size: 1.2rem;
-          line-height: 1.6;
+          display: inline-block;
           margin-bottom: 4rem;
-          max-width: 600px;
-          margin-left: auto;
-          margin-right: auto;
           color: #b0b0c0;
+          text-decoration: none;
+          transition: color 0.3s ease;
+      }
+      .profile-link:hover {
+          color: var(--secondary-accent);
       }
       .project-grid {
           display: grid;
@@ -110,8 +112,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Current Projects</h1>
-        <p class="subtitle">A collection of AI coding experiments</p>
+        <h1>Latest Projects</h1>
+        <a href="https://github.com/melindamortimer" target="_blank" rel="noopener noreferrer" class="profile-link">github.com/melindamortimer</a>
         <div class="project-grid">
             <a href="pokemon-team-builder/index.html" class="project-tile">
                 <div class="project-image" style="background-image: url('images/back-pokemon.png');"></div>
