@@ -1,0 +1,303 @@
+# Homepage Redesign Implementation Plan
+
+> **Execution:** Team of parallel agents. Phase 1 agents each write one HTML section to a temp file. Phase 2 assembly agent combines them into `index.html`. Phase 3 verifies.
+
+**Goal:** Rewrite `index.html` to adopt the Stitch "Minimalist Developer Portfolio" template with real project content, Tailwind CSS, and the Stitch design system.
+
+**Architecture:** Single-file rewrite. Each agent writes its section to `/tmp/homepage-sections/`. Assembly agent concatenates head + sections + tail into `index.html`.
+
+**Tech Stack:** Tailwind CSS (CDN), Google Fonts (Space Grotesk, Inter, JetBrains Mono), vanilla HTML
+
+**Spec:** `docs/superpowers/specs/2026-03-27-homepage-redesign-design.md`
+
+**Git policy:** All git operations are left to the user.
+
+---
+
+## Phase 1: Write Sections (parallel — 4 agents)
+
+### Task 1: Nav Section (Agent A)
+
+**Output:** `/tmp/homepage-sections/nav.html`
+
+- [ ] **Step 1: Create the temp directory and write the nav HTML**
+
+```bash
+mkdir -p /tmp/homepage-sections
+```
+
+Write to `/tmp/homepage-sections/nav.html`:
+
+```html
+<!-- Nav -->
+<nav class="fixed top-0 w-full z-50 glass-nav">
+  <div class="flex justify-between items-center max-w-7xl mx-auto px-8 py-6">
+    <div class="text-xl font-bold tracking-tighter text-on-surface font-headline">MELINDA MORTIMER</div>
+    <div class="hidden md:flex items-center gap-10">
+      <a class="text-on-surface/60 hover:text-secondary transition-colors font-headline uppercase tracking-widest text-sm" href="https://github.com/melindamortimer" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="text-on-surface/60 hover:text-secondary transition-colors font-headline uppercase tracking-widest text-sm" href="https://www.linkedin.com/in/melinda-mortimer-502a8795/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </div>
+    <a href="#" class="bg-primary hover:bg-primary-container text-on-primary px-6 py-2 rounded-md font-headline uppercase tracking-widest text-sm transition-all duration-300">Resume</a>
+  </div>
+</nav>
+```
+
+---
+
+### Task 2: Hero Section (Agent B)
+
+**Output:** `/tmp/homepage-sections/hero.html`
+
+- [ ] **Step 1: Write the hero HTML**
+
+Write to `/tmp/homepage-sections/hero.html`:
+
+```html
+<!-- Hero -->
+<main class="pt-32">
+  <section class="max-w-7xl mx-auto px-8 mb-12">
+    <div>
+      <span class="font-mono text-secondary text-sm tracking-[0.3em] uppercase block mb-4">Senior Data Scientist</span>
+      <h1 class="text-5xl md:text-7xl font-headline font-bold leading-[0.9] tracking-tighter">
+        <span class="text-gradient">MELINDA</span><br>
+        MORTIMER
+      </h1>
+    </div>
+  </section>
+```
+
+Note: `<main>` is intentionally left open — closed by the projects section.
+
+---
+
+### Task 3: Project Grid (Agent C)
+
+**Output:** `/tmp/homepage-sections/projects.html`
+
+- [ ] **Step 1: Write the project grid HTML**
+
+Write to `/tmp/homepage-sections/projects.html`:
+
+```html
+  <!-- Projects -->
+  <section class="bg-surface-container-low py-24">
+    <div class="max-w-7xl mx-auto px-8">
+      <div class="flex flex-col md:flex-row justify-between items-baseline mb-16 gap-4">
+        <h2 class="text-4xl font-headline font-bold uppercase tracking-tight">Featured Projects</h2>
+        <a class="flex items-center gap-2 text-secondary hover:text-primary transition-colors font-mono text-xs uppercase tracking-widest" href="https://github.com/melindamortimer" target="_blank" rel="noopener noreferrer">
+          Follow on GitHub &#8599;
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+        <!-- Rubik's Timer (8 cols, with image) -->
+        <a href="https://rubikstimer.io/" target="_blank" rel="noopener noreferrer" class="md:col-span-8 group relative overflow-hidden rounded-xl bg-surface-container hover:bg-surface-container-highest transition-all duration-500 block">
+          <div class="aspect-[16/9] w-full overflow-hidden">
+            <img class="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-700 scale-105 group-hover:scale-100" src="images/back-rubix.png" alt="Rubik's Timer app screenshot">
+          </div>
+          <div class="p-8">
+            <h3 class="text-3xl font-headline font-bold mb-4 text-on-surface">Rubik's Timer</h3>
+            <p class="text-on-surface-variant max-w-lg font-body">A speedcubing timer with scramble generation, session tracking, and solve statistics.</p>
+          </div>
+        </a>
+
+        <!-- CentrePass.io (4 cols, with image at bottom) -->
+        <a href="https://www.centrepass.io" target="_blank" rel="noopener noreferrer" class="md:col-span-4 group rounded-xl bg-surface-container flex flex-col hover:bg-surface-container-highest transition-all duration-500">
+          <div class="p-8 flex-grow">
+            <h3 class="text-2xl font-headline font-bold mb-4 text-on-surface">CentrePass.io</h3>
+            <p class="text-on-surface-variant text-sm leading-relaxed font-body">Netball fixtures, results, and player statistics all in one place.</p>
+          </div>
+          <div class="aspect-square w-full rounded-b-xl overflow-hidden mt-auto">
+            <img class="w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-50 transition-all duration-700" src="images/back-centrepass.png" alt="CentrePass.io app screenshot">
+          </div>
+        </a>
+
+        <!-- Pokemon Team Battle (6 cols, text only) -->
+        <a href="pokemon-team-builder/index.html" class="md:col-span-6 group rounded-xl bg-surface-container hover:bg-surface-container-highest transition-all duration-500 overflow-hidden block">
+          <div class="p-8">
+            <h3 class="text-2xl font-headline font-bold mb-4 text-on-surface">Pokemon Team Battle</h3>
+            <p class="text-on-surface-variant text-sm font-body">Build and rank two Pokemon teams based on their total stats.</p>
+          </div>
+        </a>
+
+        <!-- DS Model Template (6 cols, text only) -->
+        <a href="https://github.com/melindamortimer/ds-model-template" target="_blank" rel="noopener noreferrer" class="md:col-span-6 group rounded-xl bg-surface-container hover:bg-surface-container-highest transition-all duration-500 overflow-hidden block">
+          <div class="p-8">
+            <h3 class="text-2xl font-headline font-bold mb-4 text-on-surface">DS Model Template</h3>
+            <p class="text-on-surface-variant text-sm font-body">A reusable template for data science model development, packaging, and deployment.</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+</main>
+```
+
+Note: `</main>` closes the tag opened in the hero section.
+
+---
+
+### Task 4: Footer (Agent D)
+
+**Output:** `/tmp/homepage-sections/footer.html`
+
+- [ ] **Step 1: Write the footer HTML**
+
+Write to `/tmp/homepage-sections/footer.html`:
+
+```html
+<!-- Footer -->
+<footer class="w-full border-t border-outline-variant/15 bg-surface">
+  <div class="flex justify-center items-center px-8 py-12 gap-10 max-w-7xl mx-auto">
+    <a class="font-mono text-[10px] uppercase tracking-widest text-on-surface-variant/40 hover:text-secondary transition-colors" href="https://github.com/melindamortimer" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a class="font-mono text-[10px] uppercase tracking-widest text-on-surface-variant/40 hover:text-secondary transition-colors" href="https://www.linkedin.com/in/melinda-mortimer-502a8795/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+  </div>
+</footer>
+```
+
+---
+
+## Phase 2: Assemble (sequential — 1 agent, after Phase 1 completes)
+
+### Task 5: Assemble index.html
+
+**Files:**
+- Read: `/tmp/homepage-sections/nav.html`, `/tmp/homepage-sections/hero.html`, `/tmp/homepage-sections/projects.html`, `/tmp/homepage-sections/footer.html`
+- Write: `index.html` (full rewrite)
+
+- [ ] **Step 1: Assemble the complete file**
+
+Write `index.html` by concatenating in this exact order:
+
+1. **Head wrapper** (hardcoded — not from a temp file):
+
+```html
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Melinda Mortimer</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#0b1326",
+            "surface-container": "#171f33",
+            "surface-container-low": "#131b2e",
+            "surface-container-high": "#222a3d",
+            "surface-container-highest": "#2d3449",
+            "surface-container-lowest": "#060e20",
+            "surface-bright": "#31394d",
+            "primary": "#c0c1ff",
+            "primary-container": "#8083ff",
+            "on-primary": "#1000a9",
+            "on-surface": "#dae2fd",
+            "on-surface-variant": "#c7c4d7",
+            "secondary": "#4cd7f6",
+            "outline": "#908fa0",
+            "outline-variant": "#464554",
+            "background": "#0b1326"
+          },
+          fontFamily: {
+            "headline": ["Space Grotesk"],
+            "body": ["Inter"],
+            "mono": ["JetBrains Mono"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-nav {
+      background: rgba(11, 19, 38, 0.7);
+      backdrop-filter: blur(20px);
+    }
+    .text-gradient {
+      background: linear-gradient(135deg, #c0c1ff 0%, #8083ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    body {
+      background-color: #0b1326;
+      color: #dae2fd;
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="selection:bg-primary-container selection:text-on-primary-container">
+```
+
+2. Contents of `/tmp/homepage-sections/nav.html`
+3. Contents of `/tmp/homepage-sections/hero.html`
+4. Contents of `/tmp/homepage-sections/projects.html`
+5. Contents of `/tmp/homepage-sections/footer.html`
+
+6. **Tail wrapper** (hardcoded):
+
+```html
+</body>
+</html>
+```
+
+- [ ] **Step 2: Verify the assembled file**
+
+Read `index.html` and confirm:
+- File starts with `<!DOCTYPE html>` and ends with `</html>`
+- All tags are properly opened and closed (`<main>` opened in hero, closed in projects)
+- Contains all 4 project cards with correct links:
+  - `https://rubikstimer.io/`
+  - `https://www.centrepass.io`
+  - `pokemon-team-builder/index.html`
+  - `https://github.com/melindamortimer/ds-model-template`
+- No Stitch placeholder content remains (no NEURAL_SYNC, ALGO_EDIT, KRYPTOS, VOID_MESH, QUANT_VISION)
+- LinkedIn URL appears 3 times (nav, footer, and nowhere else unexpected)
+- GitHub URL appears 4 times (nav, "Follow on GitHub", footer, and DS Template card)
+
+---
+
+## Phase 3: Verify (sequential — after Phase 2)
+
+### Task 6: Final Verification
+
+- [ ] **Step 1: Verify complete page in desktop view**
+
+Open `index.html` in a browser at full desktop width (1280px+). Check:
+- Glass nav sticks to top on scroll
+- Hero text is left-aligned with gradient on "MELINDA"
+- Bento grid has correct 8/4 + 6/6 layout
+- All 4 project links navigate correctly
+- Footer is centered with two links
+- No console errors
+
+- [ ] **Step 2: Verify responsive behavior**
+
+Resize browser to mobile width (<768px). Check:
+- Nav: name and Resume button visible, GitHub/LinkedIn links hidden
+- Hero: text scales down appropriately
+- Grid: all 4 cards stack into single column
+- Footer: links remain centered
+
+- [ ] **Step 3: Verify hover effects**
+
+On desktop:
+- Image cards: grayscale to color, opacity increases, subtle zoom-out
+- All cards: background shifts to lighter shade
+- Nav links: turn cyan on hover
+- Resume button: background darkens on hover
+- Footer links: turn cyan on hover
+
+**Commit point:** The full redesign is complete and ready to commit.
