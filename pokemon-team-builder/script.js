@@ -754,6 +754,126 @@ const pokemonCategories = {
         'scorbunny', 'raboot', 'cinderace', 'sobble', 'drizzile', 'inteleon',
         'sprigatito', 'floragato', 'meowscarada', 'fuecoco', 'crocalor', 'skeledirge',
         'quaxly', 'quaxwell', 'quaquaval'
+    ],
+    // === Color categories (official Pokedex color + visual judgment, Gen 1-2) ===
+    bluePokemon: [
+        'squirtle', 'wartortle', 'blastoise', 'nidoran-f', 'nidorina', 'nidoqueen',
+        'oddish', 'golduck', 'poliwag', 'poliwhirl', 'poliwrath', 'tentacool',
+        'tentacruel', 'tangela', 'horsea', 'seadra', 'gyarados', 'lapras',
+        'vaporeon', 'omanyte', 'omastar', 'articuno', 'dratini', 'dragonair',
+        'totodile', 'croconaw', 'feraligatr', 'chinchou', 'lanturn', 'marill',
+        'azumarill', 'jumpluff', 'wooper', 'quagsire', 'wobbuffet', 'heracross',
+        'kingdra', 'phanpy', 'suicune'
+    ],
+    redOrangePokemon: [
+        'charmander', 'charmeleon', 'charizard', 'vulpix', 'growlithe', 'arcanine',
+        'paras', 'parasect', 'krabby', 'kingler', 'goldeen', 'seaking', 'voltorb',
+        'electrode', 'magikarp', 'flareon', 'magmar', 'jynx', 'scizor', 'vileplume',
+        'ledyba', 'ledian', 'ariados', 'slugma', 'magcargo', 'octillery', 'delibird',
+        'magby', 'ho-oh', 'cyndaquil', 'quilava', 'typhlosion', 'porygon2', 'yanma'
+    ],
+    purplePokemon: [
+        'rattata', 'ekans', 'arbok', 'nidoran-m', 'nidorino', 'nidoking', 'zubat',
+        'golbat', 'crobat', 'venonat', 'venomoth', 'gloom', 'grimer', 'muk',
+        'shellder', 'cloyster', 'gastly', 'haunter', 'gengar', 'koffing', 'weezing',
+        'starmie', 'ditto', 'aerodactyl', 'mewtwo', 'espeon', 'misdreavus', 'aipom',
+        'gligar', 'granbull', 'forretress', 'mantine', 'tyrogue'
+    ],
+    greenPokemon: [
+        'bulbasaur', 'ivysaur', 'venusaur', 'caterpie', 'metapod', 'bellsprout',
+        'weepinbell', 'victreebel', 'scyther', 'chikorita', 'bayleef', 'meganium',
+        'spinarak', 'natu', 'xatu', 'bellossom', 'politoed', 'skiploom', 'sunkern',
+        'sunflora', 'larvitar', 'tyranitar', 'celebi'
+    ],
+    yellowPokemon: [
+        'kakuna', 'beedrill', 'pikachu', 'raichu', 'sandshrew', 'sandslash',
+        'ninetales', 'meowth', 'persian', 'psyduck', 'ponyta', 'rapidash',
+        'drowzee', 'hypno', 'exeggutor', 'electabuzz', 'jolteon', 'zapdos',
+        'moltres', 'pichu', 'mareep', 'flaaffy', 'ampharos', 'girafarig',
+        'dunsparce', 'shuckle', 'elekid', 'raikou'
+    ],
+    brownPokemon: [
+        'weedle', 'pidgey', 'pidgeotto', 'pidgeot', 'raticate', 'spearow', 'fearow',
+        'diglett', 'dugtrio', 'mankey', 'primeape', 'abra', 'kadabra', 'alakazam',
+        'geodude', 'graveler', 'golem', 'farfetchd', 'doduo', 'dodrio', 'cubone',
+        'marowak', 'hitmonlee', 'hitmonchan', 'rhyhorn', 'rhydon', 'kangaskhan',
+        'staryu', 'pinsir', 'tauros', 'eevee', 'kabuto', 'kabutops', 'dragonite',
+        'sentret', 'furret', 'hoothoot', 'noctowl', 'sudowoodo', 'teddiursa',
+        'ursaring', 'swinub', 'piloswine', 'stantler', 'hitmontop', 'miltank', 'entei'
+    ],
+    // === Shape/body categories (Gen 1-2) ===
+    serpentinePokemon: [
+        'ekans', 'arbok', 'onix', 'dratini', 'dragonair', 'gyarados',
+        'steelix', 'dunsparce'
+    ],
+    roundPokemon: [
+        'clefairy', 'clefable', 'jigglypuff', 'wigglytuff', 'voltorb', 'electrode',
+        'exeggcute', 'koffing', 'weezing', 'gastly', 'chansey', 'ditto', 'snorlax',
+        'togepi', 'cleffa', 'igglybuff', 'marill', 'azumarill', 'hoppip', 'jumpluff',
+        'sunkern', 'wobbuffet', 'pineco', 'forretress', 'corsola', 'qwilfish', 'blissey'
+    ],
+    aquaticPokemon: [
+        'tentacool', 'tentacruel', 'seel', 'dewgong', 'shellder', 'cloyster',
+        'horsea', 'seadra', 'goldeen', 'seaking', 'staryu', 'starmie', 'magikarp',
+        'gyarados', 'lapras', 'omanyte', 'omastar', 'kabuto', 'kabutops',
+        'chinchou', 'lanturn', 'qwilfish', 'corsola', 'remoraid', 'octillery',
+        'mantine', 'kingdra'
+    ],
+    tinyPokemon: [
+        'diglett', 'natu', 'caterpie', 'weedle', 'pidgey', 'rattata', 'spearow',
+        'paras', 'magnemite', 'shellder', 'ditto', 'eevee', 'pichu', 'cleffa',
+        'igglybuff', 'togepi', 'sunkern', 'pikachu', 'nidoran-f', 'meowth',
+        'geodude', 'krabby', 'exeggcute', 'cubone', 'horsea', 'omanyte', 'mew',
+        'bellossom', 'marill', 'hoppip', 'wooper', 'swinub', 'smoochum'
+    ],
+    giantPokemon: [
+        'steelix', 'onix', 'gyarados', 'lugia', 'dragonair', 'ho-oh', 'arbok',
+        'lapras', 'feraligatr', 'kangaskhan', 'dragonite', 'snorlax', 'mantine', 'entei'
+    ],
+    rodentPokemon: [
+        'rattata', 'raticate', 'pikachu', 'raichu', 'sandshrew', 'sandslash',
+        'nidoran-f', 'nidorina', 'nidoran-m', 'nidorino', 'pichu', 'sentret',
+        'furret', 'marill', 'azumarill', 'cyndaquil'
+    ],
+    floralPokemon: [
+        'bulbasaur', 'ivysaur', 'venusaur', 'oddish', 'gloom', 'vileplume',
+        'paras', 'parasect', 'bellsprout', 'weepinbell', 'victreebel', 'exeggcute',
+        'exeggutor', 'tangela', 'chikorita', 'bayleef', 'meganium', 'bellossom',
+        'hoppip', 'skiploom', 'jumpluff', 'sunkern', 'sunflora', 'celebi'
+    ],
+    birdPokemon: [
+        'pidgey', 'pidgeotto', 'pidgeot', 'spearow', 'fearow', 'farfetchd',
+        'doduo', 'dodrio', 'articuno', 'zapdos', 'moltres', 'hoothoot', 'noctowl',
+        'natu', 'xatu', 'murkrow', 'delibird', 'skarmory', 'lugia', 'ho-oh', 'togetic'
+    ],
+    spikyPokemon: [
+        'sandslash', 'nidoran-m', 'nidorino', 'nidoking', 'nidoran-f', 'nidorina',
+        'nidoqueen', 'beedrill', 'cloyster', 'jolteon', 'omastar', 'pinsir',
+        'corsola', 'qwilfish', 'heracross', 'forretress', 'sneasel', 'skarmory',
+        'steelix', 'tyranitar'
+    ],
+    // === Type effectiveness (all 51 super-effective pairs) ===
+    // Format: [attackType, defenseType] meaning attackType deals 2x to defenseType
+    typeEffectiveness: [
+        ['bug', 'dark'], ['bug', 'grass'], ['bug', 'psychic'],
+        ['dark', 'ghost'], ['dark', 'psychic'],
+        ['dragon', 'dragon'],
+        ['electric', 'flying'], ['electric', 'water'],
+        ['fairy', 'dark'], ['fairy', 'dragon'], ['fairy', 'fighting'],
+        ['fighting', 'dark'], ['fighting', 'ice'], ['fighting', 'normal'],
+        ['fighting', 'rock'], ['fighting', 'steel'],
+        ['fire', 'bug'], ['fire', 'grass'], ['fire', 'ice'], ['fire', 'steel'],
+        ['flying', 'bug'], ['flying', 'fighting'], ['flying', 'grass'],
+        ['ghost', 'ghost'], ['ghost', 'psychic'],
+        ['grass', 'ground'], ['grass', 'rock'], ['grass', 'water'],
+        ['ground', 'electric'], ['ground', 'fire'], ['ground', 'poison'],
+        ['ground', 'rock'], ['ground', 'steel'],
+        ['ice', 'dragon'], ['ice', 'flying'], ['ice', 'grass'], ['ice', 'ground'],
+        ['poison', 'fairy'], ['poison', 'grass'],
+        ['psychic', 'fighting'], ['psychic', 'poison'],
+        ['rock', 'bug'], ['rock', 'fire'], ['rock', 'flying'], ['rock', 'ice'],
+        ['steel', 'fairy'], ['steel', 'ice'], ['steel', 'rock'],
+        ['water', 'fire'], ['water', 'ground'], ['water', 'rock']
     ]
 };
 
@@ -1103,6 +1223,7 @@ const arcadeMultiplierSets = [
         bonus: 100,
         tier: 'against-all-odds',
         flavor: 'Sending babies to war!',
+        hint: '3+ first-evolution Pokemon from 3-stage lines',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => pokemonCategories.threeStageFirstEvolutions.includes(p)).length;
@@ -1117,6 +1238,7 @@ const arcadeMultiplierSets = [
         bonus: 100,
         tier: 'against-all-odds',
         flavor: 'Scraping the bottom!',
+        hint: 'Team average BST under 350',
         check: (team) => {
             const avgBST = team.pokemon.reduce((sum, p) => sum + p.score, 0) / team.pokemon.length;
             if (avgBST < 350) return { matched: true, description: `Avg BST: ${Math.round(avgBST)}` };
@@ -1130,6 +1252,7 @@ const arcadeMultiplierSets = [
         bonus: 100,
         tier: 'against-all-odds',
         flavor: 'Youngster Joey energy!',
+        hint: '3+ Bug-type Pokemon',
         check: (team) => {
             const count = team.pokemon.filter(p => p.types && p.types.includes('bug')).length;
             if (count >= 3) return { matched: true, description: `${count} Bug-type Pokémon` };
@@ -1143,6 +1266,7 @@ const arcadeMultiplierSets = [
         bonus: 100,
         tier: 'against-all-odds',
         flavor: 'Refusing to evolve!',
+        hint: '4+ not fully evolved Pokemon',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const nfeCount = pokemon.filter(p => matchesAnyBase(p, pokemonCategories.canEvolve)).length;
@@ -1157,6 +1281,7 @@ const arcadeMultiplierSets = [
         bonus: 100,
         tier: 'against-all-odds',
         flavor: 'The greatest upset!',
+        hint: 'Win the battle with Sunkern on your team',
         check: (team, isWinner) => {
             if (!isWinner) return { matched: false };
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
@@ -1171,6 +1296,7 @@ const arcadeMultiplierSets = [
         bonus: 100,
         tier: 'against-all-odds',
         flavor: '...eventually',
+        hint: '2+ Slowpoke family members',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => matchesAnyBase(p, pokemonCategories.slowpokes)).length;
@@ -1185,6 +1311,7 @@ const arcadeMultiplierSets = [
         bonus: 100,
         tier: 'against-all-odds',
         flavor: 'It used Harden!',
+        hint: '2+ cocoon Pokemon (Metapod, Kakuna, etc.)',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => pokemonCategories.cocoons.includes(p)).length;
@@ -1201,6 +1328,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Gym Leader energy!',
+        hint: '3+ Pokemon sharing one type',
         check: (team) => {
             const typeCounts = {};
             team.pokemon.forEach(p => {
@@ -1224,6 +1352,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: "Gotta evolve 'em all!",
+        hint: '2+ Eeveelutions',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => pokemonCategories.eeveelutions.includes(p)).length;
@@ -1238,6 +1367,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Jurassic Park!',
+        hint: '2+ Fossil Pokemon',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => pokemonCategories.fossils.includes(p)).length;
@@ -1252,6 +1382,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Fabulous!',
+        hint: '2+ pink Pokemon',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => pokemonCategories.pinkPokemon.includes(p)).length;
@@ -1266,6 +1397,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'OG crew!',
+        hint: 'All 3 Kanto starter lines represented',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const hasGrass = pokemonCategories.kantoStarterLines.grass.some(p => pokemon.includes(p));
@@ -1282,6 +1414,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Prepare for trouble!',
+        hint: '2+ Team Rocket Pokemon',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const rocketPokemon = [...pokemonCategories.teamRocketMeowth, ...pokemonCategories.teamRocketOther];
@@ -1297,6 +1430,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Shocking resemblance!',
+        hint: '2+ Pikaclones',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => matchesAnyBase(p, pokemonCategories.pikaclones)).length;
@@ -1311,6 +1445,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Meow meow meow!',
+        hint: '2+ cat Pokemon',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => matchesAnyBase(p, pokemonCategories.catPokemon)).length;
@@ -1325,6 +1460,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: "Who's a good team?",
+        hint: '2+ dog Pokemon',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => matchesAnyBase(p, pokemonCategories.dogPokemon)).length;
@@ -1339,6 +1475,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Which came first?',
+        hint: '2+ egg-themed Pokemon',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => matchesAnyBase(p, pokemonCategories.eggPokemon)).length;
@@ -1353,6 +1490,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'One type to rule them all!',
+        hint: '5+ Pokemon sharing one type',
         check: (team) => {
             const typeCounts = {};
             team.pokemon.forEach(p => {
@@ -1376,6 +1514,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Choose your adventure!',
+        hint: '3+ starter Pokemon',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => matchesAnyBase(p, pokemonCategories.starters)).length;
@@ -1390,6 +1529,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Spooky squad!',
+        hint: '2+ Ghost-type',
         check: (team) => {
             const count = team.pokemon.filter(p => p.types && p.types.includes('ghost')).length;
             if (count >= 2) return { matched: true, description: `${count} Ghost-type Pokémon` };
@@ -1403,6 +1543,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Once upon a time...',
+        hint: '2+ Fairy-type',
         check: (team) => {
             const count = team.pokemon.filter(p => p.types && p.types.includes('fairy')).length;
             if (count >= 2) return { matched: true, description: `${count} Fairy-type Pokémon` };
@@ -1416,6 +1557,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Industrial strength!',
+        hint: '2+ Steel-type',
         check: (team) => {
             const count = team.pokemon.filter(p => p.types && p.types.includes('steel')).length;
             if (count >= 2) return { matched: true, description: `${count} Steel-type Pokémon` };
@@ -1429,6 +1571,7 @@ const arcadeMultiplierSets = [
         bonus: 75,
         tier: 'thematic-mastery',
         flavor: 'Hiyaaa!',
+        hint: '2+ Fighting-type',
         check: (team) => {
             const count = team.pokemon.filter(p => p.types && p.types.includes('fighting')).length;
             if (count >= 2) return { matched: true, description: `${count} Fighting-type Pokémon` };
@@ -1444,6 +1587,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: 'Overkill much?',
+        hint: '2+ Legendary Pokemon',
         check: (team) => {
             const count = team.pokemon.filter(p => isLegendary(p.name)).length;
             if (count >= 2) return { matched: true, description: `${count} Legendaries` };
@@ -1457,6 +1601,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: 'Maximum power!',
+        hint: '4+ fully evolved Pokemon',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => pokemonCategories.finalEvolutions.includes(p)).length;
@@ -1471,6 +1616,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: 'Beast mode!',
+        hint: '2+ Dragon-type',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => pokemonCategories.dragons.includes(p)).length;
@@ -1485,6 +1631,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: "Collector's edition!",
+        hint: 'Articuno + Zapdos + Moltres',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             if (pokemonCategories.legendaryBirds.every(b => pokemon.includes(b))) {
@@ -1500,6 +1647,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: "Johto's finest!",
+        hint: 'Raikou + Entei + Suicune',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const beasts = ['raikou', 'entei', 'suicune'];
@@ -1516,6 +1664,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: 'Almost legendary!',
+        hint: '2+ pseudo-legendaries',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             const count = pokemon.filter(p => matchesAnyBase(p, pokemonCategories.pseudoLegendaries)).length;
@@ -1530,6 +1679,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: 'Gotta go fast!',
+        hint: '3+ Pokemon with 100+ base Speed',
         check: (team) => {
             const fastCount = team.pokemon.filter(p => {
                 const speedStat = p.stats?.find(s => s.name === 'SPE');
@@ -1546,6 +1696,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: 'Unmovable objects!',
+        hint: '3+ Pokemon with 90+ base Defense',
         check: (team) => {
             const tankCount = team.pokemon.filter(p => {
                 const defStat = p.stats?.find(s => s.name === 'DEF');
@@ -1562,6 +1713,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: 'Fire, Water, Grass!',
+        hint: 'Fire + Water + Grass types on team',
         check: (team) => {
             const types = new Set(team.pokemon.flatMap(p => p.types || []));
             if (types.has('fire') && types.has('water') && types.has('grass')) {
@@ -1577,6 +1729,7 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: 'Hit hard, die fast!',
+        hint: '2+ Pokemon with ATK/SPATK >100 and HP <70',
         check: (team) => {
             const count = team.pokemon.filter(p => {
                 const atk = Math.max(
@@ -1597,9 +1750,427 @@ const arcadeMultiplierSets = [
         bonus: 50,
         tier: 'power-play',
         flavor: 'It could be anyone!',
+        hint: 'Ditto on the team',
         check: (team) => {
             const pokemon = team.pokemon.map(p => p.name.toLowerCase());
             if (pokemon.includes('ditto')) return { matched: true, description: 'Ditto on the team!' };
+            return { matched: false };
+        }
+    },
+    // === Quick Match (+30/ea) - "Type Combos & Stat Patterns" ===
+    {
+        id: 'dual-wielders',
+        name: 'Dual Wielders',
+        emoji: '⚔️',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'Double the types, double the fun!',
+        hint: '3+ Pokemon with exactly 2 types',
+        check: (team) => {
+            const count = team.pokemon.filter(p => p.types && p.types.length === 2).length;
+            if (count >= 3) return { matched: true, description: `${count} dual-type Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'pure-souls',
+        name: 'Pure Souls',
+        emoji: '✨',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'Keeping it simple!',
+        hint: '4+ Pokemon with exactly 1 type',
+        check: (team) => {
+            const count = team.pokemon.filter(p => p.types && p.types.length === 1).length;
+            if (count >= 4) return { matched: true, description: `${count} mono-type Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'rainbow-team',
+        name: 'Rainbow Team',
+        emoji: '🌈',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'All the colors of the wind!',
+        hint: '8+ distinct types across your team',
+        check: (team) => {
+            const types = new Set(team.pokemon.flatMap(p => p.types || []));
+            if (types.size >= 8) return { matched: true, description: `${types.size} distinct types` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'full-house',
+        name: 'Full House',
+        emoji: '🎴',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'Three of a kind plus a pair!',
+        hint: '3 Pokemon share one type + 2 share a different type',
+        check: (team) => {
+            const typeCounts = {};
+            team.pokemon.forEach(p => {
+                if (p.types) p.types.forEach(t => { typeCounts[t] = (typeCounts[t] || 0) + 1; });
+            });
+            const counts = Object.entries(typeCounts).sort(([,a], [,b]) => b - a);
+            if (counts.length >= 2 && counts[0][1] >= 3 && counts[1][1] >= 2) {
+                return { matched: true, description: `${counts[0][1]} ${counts[0][0]} + ${counts[1][1]} ${counts[1][0]}` };
+            }
+            return { matched: false };
+        }
+    },
+    {
+        id: 'neighbors',
+        name: 'Neighbors',
+        emoji: '🏘️',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'Living on the same route!',
+        hint: '3+ Pokemon with consecutive Pokedex numbers',
+        check: (team) => {
+            const ids = team.pokemon.map(p => p.pokedexId).filter(id => id != null).sort((a, b) => a - b);
+            if (ids.length < 3) return { matched: false };
+            let bestRun = 1, currentRun = 1;
+            for (let i = 1; i < ids.length; i++) {
+                if (ids[i] === ids[i-1] + 1) { currentRun++; bestRun = Math.max(bestRun, currentRun); }
+                else { currentRun = 1; }
+            }
+            if (bestRun >= 3) return { matched: true, description: `${bestRun} consecutive Pokedex numbers` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'opposites-attract',
+        name: 'Opposites Attract',
+        emoji: '🧲',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'Keep your enemies closer!',
+        hint: "2+ pairs where a teammate's type beats another's",
+        check: (team) => {
+            const te = pokemonCategories.typeEffectiveness;
+            let pairs = 0;
+            for (let i = 0; i < team.pokemon.length; i++) {
+                for (let j = i + 1; j < team.pokemon.length; j++) {
+                    const a = team.pokemon[i].types || [];
+                    const b = team.pokemon[j].types || [];
+                    const hasSE = te.some(([atk, def]) =>
+                        (a.includes(atk) && b.includes(def)) || (b.includes(atk) && a.includes(def))
+                    );
+                    if (hasSE) pairs++;
+                }
+            }
+            if (pairs >= 2) return { matched: true, description: `${pairs} super-effective pairs` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'stat-twins',
+        name: 'Stat Twins',
+        emoji: '👯',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'Perfectly balanced!',
+        hint: '3+ Pokemon with total BST within 15 of each other',
+        check: (team) => {
+            const scores = team.pokemon.map(p => p.score).sort((a, b) => a - b);
+            let bestCount = 1;
+            for (let i = 0; i < scores.length; i++) {
+                let count = 1;
+                for (let j = i + 1; j < scores.length; j++) {
+                    if (scores[j] - scores[i] <= 15) count++;
+                    else break;
+                }
+                bestCount = Math.max(bestCount, count);
+            }
+            if (bestCount >= 3) return { matched: true, description: `${bestCount} Pokemon within 15 BST` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'monochrome',
+        name: 'Monochrome',
+        emoji: '🎨',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'Color coordinated!',
+        hint: '4+ Pokemon of the same color group',
+        check: (team) => {
+            const colorLists = {
+                blue: pokemonCategories.bluePokemon,
+                red: pokemonCategories.redOrangePokemon,
+                purple: pokemonCategories.purplePokemon,
+                green: pokemonCategories.greenPokemon,
+                yellow: pokemonCategories.yellowPokemon,
+                brown: pokemonCategories.brownPokemon,
+                pink: pokemonCategories.pinkPokemon
+            };
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            for (const [color, list] of Object.entries(colorLists)) {
+                const count = names.filter(n => list.includes(n)).length;
+                if (count >= 4) return { matched: true, description: `${count} ${color} Pokemon` };
+            }
+            return { matched: false };
+        }
+    },
+    {
+        id: 'gen-1-purist',
+        name: 'Gen 1 Purist',
+        emoji: '1️⃣',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'Original 151 or bust!',
+        hint: 'All 6 Pokemon from Gen 1 (Kanto)',
+        check: (team) => {
+            const ids = team.pokemon.map(p => p.pokedexId).filter(id => id != null);
+            if (ids.length === 6 && ids.every(id => id >= 1 && id <= 151)) {
+                return { matched: true, description: 'All Gen 1 Pokemon!' };
+            }
+            return { matched: false };
+        }
+    },
+    {
+        id: 'gen-2-purist',
+        name: 'Gen 2 Purist',
+        emoji: '2️⃣',
+        bonus: 30,
+        tier: 'quick-match',
+        flavor: 'Johto represent!',
+        hint: 'All 6 Pokemon from Gen 2 (Johto)',
+        check: (team) => {
+            const ids = team.pokemon.map(p => p.pokedexId).filter(id => id != null);
+            if (ids.length === 6 && ids.every(id => id >= 152 && id <= 251)) {
+                return { matched: true, description: 'All Gen 2 Pokemon!' };
+            }
+            return { matched: false };
+        }
+    },
+    // === Lucky Finds (+15/ea) - "Visual & Thematic Fun" ===
+    // Color achievements
+    {
+        id: 'blue-crew',
+        name: 'Blue Crew',
+        emoji: '🔵',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Feeling blue (in a good way)!',
+        hint: '3+ blue-colored Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => pokemonCategories.bluePokemon.includes(n)).length;
+            if (count >= 3) return { matched: true, description: `${count} blue Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'red-alert',
+        name: 'Red Alert',
+        emoji: '🔴',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Hot team incoming!',
+        hint: '3+ red/orange-colored Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => pokemonCategories.redOrangePokemon.includes(n)).length;
+            if (count >= 3) return { matched: true, description: `${count} red/orange Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'purple-reign',
+        name: 'Purple Reign',
+        emoji: '🟣',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Royalty on the field!',
+        hint: '3+ purple-colored Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => pokemonCategories.purplePokemon.includes(n)).length;
+            if (count >= 3) return { matched: true, description: `${count} purple Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'green-machine',
+        name: 'Green Machine',
+        emoji: '🟢',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: "It's not easy being green!",
+        hint: '3+ green-colored Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => pokemonCategories.greenPokemon.includes(n)).length;
+            if (count >= 3) return { matched: true, description: `${count} green Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'yellow-squad',
+        name: 'Yellow Squad',
+        emoji: '🟡',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Electric vibes!',
+        hint: '3+ yellow-colored Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => pokemonCategories.yellowPokemon.includes(n)).length;
+            if (count >= 3) return { matched: true, description: `${count} yellow Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'brown-town',
+        name: 'Brown Town',
+        emoji: '🟤',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Down to earth!',
+        hint: '3+ brown-colored Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => pokemonCategories.brownPokemon.includes(n)).length;
+            if (count >= 3) return { matched: true, description: `${count} brown Pokemon` };
+            return { matched: false };
+        }
+    },
+    // Shape/body achievements
+    {
+        id: 'serpent-strike',
+        name: 'Serpent Strike',
+        emoji: '🐍',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Sssssurprise!',
+        hint: '2+ serpentine Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => matchesAnyBase(n, pokemonCategories.serpentinePokemon)).length;
+            if (count >= 2) return { matched: true, description: `${count} serpentine Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'round-table',
+        name: 'Round Table',
+        emoji: '⚪',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Knights not included!',
+        hint: '3+ round/spherical Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => matchesAnyBase(n, pokemonCategories.roundPokemon)).length;
+            if (count >= 3) return { matched: true, description: `${count} round Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'aqua-show',
+        name: 'Aqua Show',
+        emoji: '🐟',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Something fishy going on!',
+        hint: '3+ fish/aquatic-bodied Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => matchesAnyBase(n, pokemonCategories.aquaticPokemon)).length;
+            if (count >= 3) return { matched: true, description: `${count} aquatic Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'tiny-titans',
+        name: 'Tiny Titans',
+        emoji: '🐣',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: "Size doesn't matter!",
+        hint: '3+ Pokemon under 0.5m tall',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => matchesAnyBase(n, pokemonCategories.tinyPokemon)).length;
+            if (count >= 3) return { matched: true, description: `${count} tiny Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'kaiju-club',
+        name: 'Kaiju Club',
+        emoji: '🦕',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'They grow up so fast!',
+        hint: '2+ Pokemon over 2m tall',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => matchesAnyBase(n, pokemonCategories.giantPokemon)).length;
+            if (count >= 2) return { matched: true, description: `${count} giant Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'rodent-run',
+        name: 'Rodent Run',
+        emoji: '🐭',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Squeaky squad!',
+        hint: '2+ rodent Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => matchesAnyBase(n, pokemonCategories.rodentPokemon)).length;
+            if (count >= 2) return { matched: true, description: `${count} rodent Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'floral-arrangement',
+        name: 'Floral Arrangement',
+        emoji: '🌺',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Smells like victory!',
+        hint: '3+ plant/flower Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => matchesAnyBase(n, pokemonCategories.floralPokemon)).length;
+            if (count >= 3) return { matched: true, description: `${count} floral Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'bird-watching',
+        name: 'Bird Watching',
+        emoji: '🦅',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: 'Tweet tweet!',
+        hint: '3+ bird-shaped Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => matchesAnyBase(n, pokemonCategories.birdPokemon)).length;
+            if (count >= 3) return { matched: true, description: `${count} bird Pokemon` };
+            return { matched: false };
+        }
+    },
+    {
+        id: 'spiky-situation',
+        name: 'Spiky Situation',
+        emoji: '🌵',
+        bonus: 15,
+        tier: 'lucky-finds',
+        flavor: "Don't touch!",
+        hint: '3+ spiky/quilled Pokemon',
+        check: (team) => {
+            const names = team.pokemon.map(p => p.name.toLowerCase());
+            const count = names.filter(n => matchesAnyBase(n, pokemonCategories.spikyPokemon)).length;
+            if (count >= 3) return { matched: true, description: `${count} spiky Pokemon` };
             return { matched: false };
         }
     }
@@ -1696,6 +2267,108 @@ function getContributingPokemon(setId, team) {
             }).map(p => p.name);
         case 'the-impostor':
             return pokemon.filter(p => p.name.toLowerCase() === 'ditto').map(p => p.name);
+        case 'dual-wielders':
+            return pokemon.filter(p => p.types && p.types.length === 2).map(p => p.name);
+        case 'pure-souls':
+            return pokemon.filter(p => p.types && p.types.length === 1).map(p => p.name);
+        case 'rainbow-team':
+            return pokemon.map(p => p.name); // all contribute types
+        case 'full-house': {
+            const fhTypeCounts = {};
+            pokemon.forEach(p => p.types?.forEach(t => { fhTypeCounts[t] = (fhTypeCounts[t] || 0) + 1; }));
+            const fhCounts = Object.entries(fhTypeCounts).sort(([,a], [,b]) => b - a);
+            if (fhCounts.length >= 2) {
+                const topTypes = [fhCounts[0][0], fhCounts[1][0]];
+                return pokemon.filter(p => p.types?.some(t => topTypes.includes(t))).map(p => p.name);
+            }
+            return [];
+        }
+        case 'neighbors': {
+            const nIds = pokemon.map(p => ({ name: p.name, id: p.pokedexId || getPokedexIdFromSprite(p.sprite) }))
+                .filter(p => p.id != null).sort((a, b) => a.id - b.id);
+            let bestStart = 0, bestLen = 1, curStart = 0, curLen = 1;
+            for (let i = 1; i < nIds.length; i++) {
+                if (nIds[i].id === nIds[i-1].id + 1) { curLen++; if (curLen > bestLen) { bestLen = curLen; bestStart = curStart; } }
+                else { curStart = i; curLen = 1; }
+            }
+            return nIds.slice(bestStart, bestStart + bestLen).map(p => p.name);
+        }
+        case 'opposites-attract': {
+            const te = pokemonCategories.typeEffectiveness;
+            const involved = new Set();
+            for (let i = 0; i < pokemon.length; i++) {
+                for (let j = i + 1; j < pokemon.length; j++) {
+                    const a = pokemon[i].types || [];
+                    const b = pokemon[j].types || [];
+                    if (te.some(([atk, def]) => (a.includes(atk) && b.includes(def)) || (b.includes(atk) && a.includes(def)))) {
+                        involved.add(pokemon[i].name);
+                        involved.add(pokemon[j].name);
+                    }
+                }
+            }
+            return [...involved];
+        }
+        case 'stat-twins': {
+            const stScores = pokemon.map(p => ({ name: p.name, score: p.score })).sort((a, b) => a.score - b.score);
+            let stBestGroup = [];
+            for (let i = 0; i < stScores.length; i++) {
+                const group = [stScores[i]];
+                for (let j = i + 1; j < stScores.length; j++) {
+                    if (stScores[j].score - stScores[i].score <= 15) group.push(stScores[j]);
+                    else break;
+                }
+                if (group.length > stBestGroup.length) stBestGroup = group;
+            }
+            return stBestGroup.map(p => p.name);
+        }
+        case 'monochrome': {
+            const mcColorLists = {
+                blue: pokemonCategories.bluePokemon, red: pokemonCategories.redOrangePokemon,
+                purple: pokemonCategories.purplePokemon, green: pokemonCategories.greenPokemon,
+                yellow: pokemonCategories.yellowPokemon, brown: pokemonCategories.brownPokemon,
+                pink: pokemonCategories.pinkPokemon
+            };
+            const mcNames = pokemon.map(p => p.name.toLowerCase());
+            let bestColor = [], bestCount = 0;
+            for (const [, list] of Object.entries(mcColorLists)) {
+                const matching = pokemon.filter(p => list.includes(p.name.toLowerCase()));
+                if (matching.length > bestCount) { bestCount = matching.length; bestColor = matching; }
+            }
+            return bestColor.map(p => p.name);
+        }
+        case 'gen-1-purist':
+        case 'gen-2-purist':
+            return pokemon.map(p => p.name); // all 6 contribute
+        case 'blue-crew':
+            return pokemon.filter(p => pokemonCategories.bluePokemon.includes(p.name.toLowerCase())).map(p => p.name);
+        case 'red-alert':
+            return pokemon.filter(p => pokemonCategories.redOrangePokemon.includes(p.name.toLowerCase())).map(p => p.name);
+        case 'purple-reign':
+            return pokemon.filter(p => pokemonCategories.purplePokemon.includes(p.name.toLowerCase())).map(p => p.name);
+        case 'green-machine':
+            return pokemon.filter(p => pokemonCategories.greenPokemon.includes(p.name.toLowerCase())).map(p => p.name);
+        case 'yellow-squad':
+            return pokemon.filter(p => pokemonCategories.yellowPokemon.includes(p.name.toLowerCase())).map(p => p.name);
+        case 'brown-town':
+            return pokemon.filter(p => pokemonCategories.brownPokemon.includes(p.name.toLowerCase())).map(p => p.name);
+        case 'serpent-strike':
+            return pokemon.filter(p => matchesAnyBase(p.name.toLowerCase(), pokemonCategories.serpentinePokemon)).map(p => p.name);
+        case 'round-table':
+            return pokemon.filter(p => matchesAnyBase(p.name.toLowerCase(), pokemonCategories.roundPokemon)).map(p => p.name);
+        case 'aqua-show':
+            return pokemon.filter(p => matchesAnyBase(p.name.toLowerCase(), pokemonCategories.aquaticPokemon)).map(p => p.name);
+        case 'tiny-titans':
+            return pokemon.filter(p => matchesAnyBase(p.name.toLowerCase(), pokemonCategories.tinyPokemon)).map(p => p.name);
+        case 'kaiju-club':
+            return pokemon.filter(p => matchesAnyBase(p.name.toLowerCase(), pokemonCategories.giantPokemon)).map(p => p.name);
+        case 'rodent-run':
+            return pokemon.filter(p => matchesAnyBase(p.name.toLowerCase(), pokemonCategories.rodentPokemon)).map(p => p.name);
+        case 'floral-arrangement':
+            return pokemon.filter(p => matchesAnyBase(p.name.toLowerCase(), pokemonCategories.floralPokemon)).map(p => p.name);
+        case 'bird-watching':
+            return pokemon.filter(p => matchesAnyBase(p.name.toLowerCase(), pokemonCategories.birdPokemon)).map(p => p.name);
+        case 'spiky-situation':
+            return pokemon.filter(p => matchesAnyBase(p.name.toLowerCase(), pokemonCategories.spikyPokemon)).map(p => p.name);
         default:
             return [];
     }
@@ -1750,6 +2423,11 @@ function calculatePerPokemonScore(teamData, multipliers, opponentData) {
     }, 0);
 }
 
+function getPokedexIdFromSprite(spriteUrl) {
+    const match = spriteUrl?.match(/\/pokemon\/(\d+)\./);
+    return match ? parseInt(match[1]) : null;
+}
+
 function enrichTeamDataForArcade(teamData) {
     // The team data from getTeamData() only has name, score, sprite.
     // We need types and individual stats for multiplier checks.
@@ -1778,7 +2456,8 @@ function enrichTeamDataForArcade(teamData) {
                 value: parseInt(b.querySelector('.stat-value')?.textContent, 10) || 0
             }));
 
-            return { name, score, sprite, types, stats };
+            const pokedexId = getPokedexIdFromSprite(sprite);
+            return { name, score, sprite, types, stats, pokedexId };
         });
     }
 
@@ -1799,7 +2478,10 @@ function showBetModal(teamId) {
         id: s.id,
         name: s.name,
         emoji: s.emoji,
-        tier: s.tier
+        tier: s.tier,
+        bonus: s.bonus,
+        flavor: s.flavor,
+        hint: s.hint
     }));
 
     const popup = createPopup('bet-modal', 'bet-modal-popup', `
@@ -1807,11 +2489,32 @@ function showBetModal(teamId) {
             <h3>🎰 Place Your Bet</h3>
             <p class="bet-modal-desc">Bet on a bonus you think your team qualifies for.<br>Correct: 1.2x bonus | Wrong: 0.9x penalty</p>
             <div class="bet-categories">
-                ${categories.map(c => `
-                    <button class="bet-category-btn" data-id="${c.id}" data-name="${c.name}">
-                        ${c.emoji} ${c.name}
-                    </button>
-                `).join('')}
+                ${(() => {
+                    const tierOrder = ['against-all-odds', 'thematic-mastery', 'power-play', 'quick-match', 'lucky-finds'];
+                    const tierLabels = {
+                        'against-all-odds': 'Against All Odds (+100/ea)',
+                        'thematic-mastery': 'Thematic Mastery (+75/ea)',
+                        'power-play': 'Power Play (+50/ea)',
+                        'quick-match': 'Quick Match (+30/ea)',
+                        'lucky-finds': 'Lucky Finds (+15/ea)'
+                    };
+                    return tierOrder.map(tier => {
+                        const tierCats = categories.filter(c => c.tier === tier);
+                        if (tierCats.length === 0) return '';
+                        return `
+                            <div class="bet-tier-section">
+                                <div class="bet-tier-header">${tierLabels[tier]}</div>
+                                ${tierCats.map(c => `
+                                    <button class="bet-category-btn" data-id="${c.id}" data-name="${c.name}">
+                                        <span class="bet-btn-main">${c.emoji} ${c.name}</span>
+                                        <span class="bet-btn-info">+${c.bonus}/ea</span>
+                                        <span class="bet-tooltip">${c.flavor} — ${c.hint}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        `;
+                    }).join('');
+                })()}
             </div>
             <button class="bet-cancel-btn">Cancel / No Bet</button>
         </div>
@@ -1849,9 +2552,13 @@ async function showArcadeReveal(
     team1Raw, team2Raw,
     team1Multipliers, team2Multipliers,
     team1Final, team2Final,
-    bets, team1BetMult, team2BetMult
+    bets, team1BetMult, team2BetMult,
+    replayOptions
 ) {
     return new Promise(async (resolve) => {
+        const team1Name = replayOptions?.team1Name || getTeamNameElement('team1')?.textContent || 'Team 1';
+        const team2Name = replayOptions?.team2Name || getTeamNameElement('team2')?.textContent || 'Team 2';
+
         const overlay = document.createElement('div');
         overlay.className = 'arcade-reveal-overlay';
         overlay.innerHTML = `
@@ -1859,14 +2566,14 @@ async function showArcadeReveal(
                 <div class="arcade-reveal-banner">ARCADE BATTLE!</div>
                 <div class="arcade-reveal-scores">
                     <div class="arcade-reveal-team">
-                        <div class="arcade-reveal-team-name">${getTeamNameElement('team1').textContent}</div>
+                        <div class="arcade-reveal-team-name">${team1Name}</div>
                         <div class="arcade-reveal-raw-score">${team1Raw}</div>
                         <div class="arcade-reveal-reels" id="arcade-reveal-t1-reels"></div>
                         <div class="arcade-reveal-final-score" id="arcade-reveal-t1-final"></div>
                     </div>
                     <div class="arcade-reveal-vs">VS</div>
                     <div class="arcade-reveal-team">
-                        <div class="arcade-reveal-team-name">${getTeamNameElement('team2').textContent}</div>
+                        <div class="arcade-reveal-team-name">${team2Name}</div>
                         <div class="arcade-reveal-raw-score">${team2Raw}</div>
                         <div class="arcade-reveal-reels" id="arcade-reveal-t2-reels"></div>
                         <div class="arcade-reveal-final-score" id="arcade-reveal-t2-final"></div>
@@ -1911,8 +2618,8 @@ async function showArcadeReveal(
             });
             return map;
         }
-        const t1Sprites = buildSpriteMap('team1');
-        const t2Sprites = buildSpriteMap('team2');
+        const t1Sprites = replayOptions?.team1Sprites || buildSpriteMap('team1');
+        const t2Sprites = replayOptions?.team2Sprites || buildSpriteMap('team2');
 
         function buildBadgeHTML(m, extraClass = '', tooltip = '') {
             const titleAttr = tooltip ? ` title="${tooltip.replace(/"/g, '&quot;')}"` : '';
@@ -2032,10 +2739,10 @@ async function showArcadeReveal(
 
             const winnerEl = document.getElementById('arcade-reveal-winner');
             if (team1Final > team2Final) {
-                winnerEl.textContent = `${getTeamNameElement('team1').textContent} WINS!`;
+                winnerEl.textContent = `${team1Name} WINS!`;
                 winnerEl.className = 'arcade-reveal-winner show burst';
             } else if (team2Final > team1Final) {
-                winnerEl.textContent = `${getTeamNameElement('team2').textContent} WINS!`;
+                winnerEl.textContent = `${team2Name} WINS!`;
                 winnerEl.className = 'arcade-reveal-winner show burst';
             } else {
                 winnerEl.textContent = "IT'S A TIE!";
@@ -2353,8 +3060,14 @@ function detectGoatWoatAchievements(team1Data, team2Data, existingHistory) {
     // Sort ascending for WOAT ranking
     const sortedAsc = [...allScores].sort((a, b) => a - b);
 
-    // Need enough history for rankings to be meaningful (at least 10 teams = 5 battles)
-    if (allScores.length < 10) return result;
+    const totalGames = Math.floor(allScores.length / 2);
+    // Champion & Elite: need 10+ games
+    const hasEnoughForElite = totalGames >= 10;
+    // Contender: need 50+ games
+    const hasEnoughForContender = totalGames >= 50;
+
+    // Not enough games for any ranking
+    if (!hasEnoughForElite) return result;
 
     for (const [teamId, teamData, score] of [['team1', team1Data, team1Score], ['team2', team2Data, team2Score]]) {
         // GOAT ranking (where does this score sit among highest?)
@@ -2362,7 +3075,7 @@ function detectGoatWoatAchievements(team1Data, team2Data, existingHistory) {
         // WOAT ranking (where does this score sit among lowest?)
         const woatRank = sortedAsc.indexOf(score) + 1;
 
-        if (goatRank === 1) {
+        if (goatRank === 1 && hasEnoughForElite) {
             result[teamId].push({
                 id: 'goat-champion',
                 title: 'GOAT Champion!',
@@ -2370,7 +3083,7 @@ function detectGoatWoatAchievements(team1Data, team2Data, existingHistory) {
                 description: `${teamData.name} is the #1 Greatest of All Time!`,
                 triggeringPokemon: teamData.pokemon
             });
-        } else if (goatRank <= 3) {
+        } else if (goatRank <= 3 && hasEnoughForElite) {
             result[teamId].push({
                 id: 'goat-elite',
                 title: 'GOAT Elite',
@@ -2378,7 +3091,7 @@ function detectGoatWoatAchievements(team1Data, team2Data, existingHistory) {
                 description: `${teamData.name} ranked #${goatRank} all time!`,
                 triggeringPokemon: teamData.pokemon
             });
-        } else if (goatRank <= 10) {
+        } else if (goatRank <= 10 && hasEnoughForContender) {
             result[teamId].push({
                 id: 'goat-contender',
                 title: 'GOAT Contender',
@@ -2388,7 +3101,7 @@ function detectGoatWoatAchievements(team1Data, team2Data, existingHistory) {
             });
         }
 
-        if (woatRank === 1) {
+        if (woatRank === 1 && hasEnoughForElite) {
             result[teamId].push({
                 id: 'woat-champion',
                 title: 'WOAT Champion...',
@@ -2396,7 +3109,7 @@ function detectGoatWoatAchievements(team1Data, team2Data, existingHistory) {
                 description: `${teamData.name} is the #1 Worst of All Time...`,
                 triggeringPokemon: teamData.pokemon
             });
-        } else if (woatRank <= 3) {
+        } else if (woatRank <= 3 && hasEnoughForElite) {
             result[teamId].push({
                 id: 'woat-elite',
                 title: 'WOAT Elite',
@@ -2404,7 +3117,7 @@ function detectGoatWoatAchievements(team1Data, team2Data, existingHistory) {
                 description: `${teamData.name} ranked bottom ${woatRank} all time...`,
                 triggeringPokemon: teamData.pokemon
             });
-        } else if (woatRank <= 10) {
+        } else if (woatRank <= 10 && hasEnoughForContender) {
             result[teamId].push({
                 id: 'woat-contender',
                 title: 'WOAT Contender',
@@ -3372,6 +4085,7 @@ function renderHistoryEntry(result) {
     let arcadeDetailsHTML = '';
     if (result.mode === 'arcade' && result.arcade) {
         arcadeBadgeHTML = '<span class="history-arcade-tag">ARCADE</span>';
+        arcadeBadgeHTML += '<button class="replay-reveal-btn" title="Replay arcade reveal animation">Replay</button>';
 
         const formatMultipliers = (teamArcade) => {
             if (!teamArcade?.multipliers?.length) return '<span class="no-multipliers">No bonuses</span>';
@@ -3444,6 +4158,36 @@ function renderHistoryEntry(result) {
     });
 
     historyList.appendChild(entry);
+
+    // Replay reveal button for arcade entries
+    const replayBtn = entry.querySelector('.replay-reveal-btn');
+    if (replayBtn && result.mode === 'arcade' && result.arcade) {
+        replayBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const t1 = result.arcade.team1;
+            const t2 = result.arcade.team2;
+
+            // Build sprite maps from saved Pokemon data
+            const team1Sprites = {};
+            result.team1.pokemon.forEach(p => { if (p.name && p.sprite) team1Sprites[p.name] = p.sprite; });
+            const team2Sprites = {};
+            result.team2.pokemon.forEach(p => { if (p.name && p.sprite) team2Sprites[p.name] = p.sprite; });
+
+            showArcadeReveal(
+                t1.rawScore, t2.rawScore,
+                t1.multipliers || [], t2.multipliers || [],
+                t1.adjustedScore, t2.adjustedScore,
+                { team1: t1.bet, team2: t2.bet },
+                t1.betMultiplier || 1, t2.betMultiplier || 1,
+                {
+                    team1Name: result.team1.name,
+                    team2Name: result.team2.name,
+                    team1Sprites,
+                    team2Sprites
+                }
+            );
+        });
+    }
 }
 
 async function loadBattleFromHistory(result, hintElement) {
@@ -4013,6 +4757,14 @@ function updateGoatWoat() {
         return;
     }
 
+    const totalGames = Math.floor(history.length);
+    let thresholdMsg = '';
+    if (totalGames < 10) {
+        thresholdMsg = `<p class="goat-threshold-msg">Play ${10 - totalGames} more game${10 - totalGames === 1 ? '' : 's'} to unlock GOAT/WOAT Champion & Elite rankings</p>`;
+    } else if (totalGames < 50) {
+        thresholdMsg = `<p class="goat-threshold-msg">Play ${50 - totalGames} more game${50 - totalGames === 1 ? '' : 's'} to unlock GOAT/WOAT Contender rankings</p>`;
+    }
+
     // Sort by score to find highest and lowest
     allTeams.sort((a, b) => b.score - a.score);
 
@@ -4128,6 +4880,9 @@ function updateGoatWoat() {
     `;
     woatSection.innerHTML = woatHTML;
 
+    if (thresholdMsg) {
+        goatWoatContainer.insertAdjacentHTML('beforeend', thresholdMsg);
+    }
     goatWoatContainer.appendChild(goatSection);
     goatWoatContainer.appendChild(woatSection);
 
