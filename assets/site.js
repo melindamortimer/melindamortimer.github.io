@@ -8,12 +8,14 @@
       instructions: "Arrow keys to move · Space to jump",
       alt: "May 2025 prototype: cat selector above a pale blue movement area.",
     },
-    june: {
-      directory: "2025-06",
-      title: "ChatGPT · June 2025 cat-snake iteration",
-      date: "June 29, 2025 · Cat-snake iteration",
-      instructions: "Arrow keys to steer · Collect fish to grow your trail",
-      alt: "June 2025 iteration: cat selector, score and fish collection area.",
+    july: {
+      directory: "2026-07",
+      title: "GPT 5.6 Sol · July 2026 · Miso’s Moonlight Run",
+      date: "July 2026 · GPT 5.6 Sol · Miso’s Moonlight Run",
+      instructions:
+        "A/D or arrows to move · Space to jump · Shift to pounce · Esc to pause · Shift+Esc to leave game",
+      alt: "Miso’s Moonlight Run: an illustrated moonlit rooftop platformer.",
+      modern: true,
     },
   };
   const get = (id) => document.getElementById(id);
@@ -28,6 +30,13 @@
   let ready = false;
 
   function scale() {
+    const modern = Boolean(builds[selected].modern);
+    stage.classList.toggle("modern-game", modern);
+    if (modern) {
+      stage.style.height = `${stage.clientWidth <= 640 ? stage.clientWidth + 48 : Math.min(640, (stage.clientWidth * 9) / 16)}px`;
+      if (frame) frame.style.transform = "none";
+      return;
+    }
     const factor = Math.min(1, stage.clientWidth / 840);
     stage.style.height = `${560 * factor}px`;
     if (frame)
@@ -63,7 +72,9 @@
     const build = builds[selected];
     frame = document.createElement("iframe");
     frame.title = build.title;
-    frame.setAttribute("sandbox", "allow-scripts");
+    // The modern game is trusted, first-party archived code. Its ES modules and
+    // local save data need a normal origin; the legacy script stays sandboxed.
+    if (!build.modern) frame.setAttribute("sandbox", "allow-scripts");
     frame.src = `experiments/cat/archive/${build.directory}/preview.html`;
     frame.dataset.focusOnReady = String(focus);
     get("game-preview").hidden = true;
@@ -78,7 +89,7 @@
         get("build-status").textContent =
           "Could not load the game. Try again or use Open original.";
       }
-    }, 12000);
+    }, 30000);
   }
   function selectBuild(key, focusTab = false) {
     const wasPlaying = Boolean(frame);
@@ -99,6 +110,7 @@
     get("game-instructions").textContent = build.instructions;
     get("build-status").textContent = build.date;
     get("jump-key").hidden = key !== "may";
+    scale();
     if (wasPlaying) play(false);
   }
   tabs.forEach((tab, index) => {
@@ -151,7 +163,7 @@
       ready = true;
       clearTimeout(readyTimer);
       get("restart").disabled = false;
-      get("touch-controls").hidden = false;
+      get("touch-controls").hidden = Boolean(builds[selected].modern);
       get("build-status").textContent = `Playing · ${builds[selected].date}`;
       if (frame.dataset.focusOnReady === "true")
         frame.focus({ preventScroll: true });

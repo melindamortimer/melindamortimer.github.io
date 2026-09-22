@@ -1,0 +1,4 @@
+/* Keep hidden menus from scrolling the embedded canvas out of its viewport. */
+.game-shell {
+  overflow: clip;
+}

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#071832" />
+    <meta
+      name="description"
+      content="A cozy moonlit platformer starring Miso the cat across three hand-painted city districts."
+    />
+    <title>Miso’s Moonlight Run</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main id="app" class="app">
+      <section id="game-shell" class="game-shell" aria-label="Miso’s Moonlight Run game">
+        <canvas
+          id="game-canvas"
+          width="960"
+          height="540"
+          tabindex="0"
+          aria-label="Moonlit city platforming game. Move with A and D or the arrow keys, jump with Space, and pounce with Shift."
+        >
+          Your browser needs Canvas support to play Miso’s Moonlight Run.
+        </canvas>
+
+        <div id="hud" class="hud" aria-hidden="true">
+          <div class="hud__left">
+            <div id="health-display" class="hud__health" aria-label="3 of 3 hearts remaining"></div>
+            <div id="fish-display" class="hud__collectible" aria-label="0 of 5 moonfish collected">
+              <span class="hud__fish-icon" aria-hidden="true"></span>
+              <strong id="fish-count">0 / 5</strong>
+            </div>
+            <span id="yarn-status" class="hud__yarn">Yarn hidden</span>
+          </div>
+          <strong id="level-name" class="hud__title">Rooftop Ramble</strong>
+          <div class="hud__right">
+            <time id="time-display" class="hud__time">00:00</time>
+            <button id="pause-button" class="icon-button" type="button" aria-label="Pause game">Pause</button>
+          </div>
+          <div class="desktop-play-hint" aria-hidden="true">
+            <span><kbd>←</kbd><kbd>→</kbd> Move</span>
+            <span><kbd>Space</kbd> Jump</span>
+            <span><kbd>Shift</kbd> Pounce</span>
+          </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+        <section
+          id="loading-screen"
+          class="screen is-active"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          aria-label="Loading game"
+          aria-hidden="false"
+          tabindex="-1"
+        >
+          <div class="loading-mark" aria-hidden="true"></div>
+          <p>Chasing moonbeams…</p>
+        </section>
+
+        <section id="title-screen" class="screen screen--title" aria-labelledby="game-title" aria-hidden="true">
+          <div class="title-card">
+            <div class="brand-mark" aria-hidden="true"></div>
+            <h1 id="game-title">Miso’s<br />Moonlight Run</h1>
+            <p>Bring the moonfish home before dawn.</p>
+            <div class="title-actions">
+              <button id="start-game" class="button button--primary" type="button">Begin the run</button>
+              <div class="button-row">
+                <button id="open-levels" class="button button--quiet" type="button">Levels</button>
+                <button id="open-settings" class="button button--quiet" type="button">Settings</button>
+              </div>
+            </div>
+            <p class="title-controls">
+              <span><kbd>A</kbd><kbd>D</kbd> move</span>
+              <span><kbd>Space</kbd> jump</span>
+              <span><kbd>Shift</kbd> pounce</span>
+            </p>
+          </div>
+        </section>
+
+        <section
+          id="level-screen"
+          class="screen"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="level-heading"
+          aria-describedby="level-description"
+          aria-hidden="true"
+        >
+          <div class="panel panel--wide" tabindex="-1">
+            <header class="panel__header">
+              <div>
+                <h2 id="level-heading">Choose a district</h2>
+                <p id="level-description">Each district has its own skyline, weather, and platform set.</p>
+              </div>
+              <button id="close-levels" class="close-button" type="button" aria-label="Back to title">Back</button>
+            </header>
+            <div id="level-list" class="level-list"></div>
+          </div>
+        </section>
+
+        <section
+          id="settings-screen"
+          class="screen"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="settings-heading"
+          aria-describedby="settings-description"
+          aria-hidden="true"
+        >
+          <div class="panel" tabindex="-1">
+            <header class="panel__header">
+              <div>
+                <h2 id="settings-heading">A quieter night</h2>
+                <p id="settings-description">Tune the moonlight run to your comfort.</p>
+              </div>
+              <button id="close-settings" class="close-button" type="button" aria-label="Back to title">Back</button>
+            </header>
+            <div class="settings-list">
+              <button id="mute-toggle" class="setting-row" type="button" aria-pressed="false">
+                <span><strong>Audio</strong><small>Music and tiny cat sounds</small></span>
+                <span class="setting-state" data-setting-label>Sound on</span>
+              </button>
+              <button id="motion-toggle" class="setting-row" type="button" aria-pressed="false">
+                <span><strong>Motion</strong><small>Softer camera and fewer particles</small></span>
+                <span class="setting-state" data-setting-label>Full motion</span>
+              </button>
+              <button
+                id="shake-toggle"
+                class="setting-row"
+                type="button"
+                aria-pressed="true"
+                aria-describedby="shake-description"
+              >
+                <span><strong>Camera shake</strong><small id="shake-description">A little impact on pounces and bumps</small></span>
+                <span class="setting-state" data-setting-label>Screen shake on</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="pause-screen"
+          class="screen"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="pause-heading"
+          aria-describedby="pause-description"
+          aria-hidden="true"
+        >
+          <div class="panel panel--compact" tabindex="-1">
+            <h2 id="pause-heading">Catnap</h2>
+            <p id="pause-description">The moon will wait.</p>
+            <div class="stacked-actions">
+              <button id="resume-game" class="button button--primary" type="button">Keep running</button>
+              <button id="restart-game" class="button button--quiet" type="button">Restart level</button>
+              <button id="quit-game" class="button button--text" type="button">Return to title</button>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="complete-screen"
+          class="screen"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="complete-title"
+          aria-describedby="complete-subtitle"
+          aria-hidden="true"
+        >
+          <div class="panel panel--result" tabindex="-1">
+            <div class="result-star" aria-hidden="true"></div>
+            <h2 id="complete-title">Rooftop cleared!</h2>
+            <p id="complete-subtitle">The attic glows a little brighter.</p>
+            <ul id="complete-stats" class="result-stats"></ul>
+            <div class="stacked-actions">
+              <button id="next-level" class="button button--primary" type="button">Next district</button>
+              <button id="complete-levels" class="button button--quiet" type="button">Choose a district</button>
+              <button id="replay-level" class="button button--quiet" type="button">Run it again</button>
+              <button id="complete-title-action" class="button button--text" type="button">Return to title</button>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="gameover-screen"
+          class="screen"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="gameover-heading"
+          aria-describedby="gameover-description"
+          aria-hidden="true"
+        >
+          <div class="panel panel--compact" tabindex="-1">
+            <div class="sleepy-mark" aria-hidden="true"></div>
+            <h2 id="gameover-heading">Out of whiskers</h2>
+            <p id="gameover-description">Miso only needs a tiny breather.</p>
+            <div class="stacked-actions">
+              <button id="gameover-retry" class="button button--primary" type="button">Try again</button>
+              <button id="gameover-quit" class="button button--text" type="button">Return to title</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="touch-controls" role="group" aria-label="Gameplay controls" aria-hidden="true">
+          <div class="touch-controls__move" role="group" aria-label="Movement controls">
+            <button type="button" data-action="left" aria-label="Move left" aria-keyshortcuts="ArrowLeft A">Left</button>
+            <button type="button" data-action="right" aria-label="Move right" aria-keyshortcuts="ArrowRight D">Right</button>
+          </div>
+          <div class="touch-controls__action" role="group" aria-label="Action controls">
+            <button type="button" data-action="dash" aria-label="Pounce" aria-keyshortcuts="Shift X">
+              <span class="pounce-icon" aria-hidden="true"></span>
+            </button>
+            <button type="button" data-action="jump" aria-label="Jump" aria-keyshortcuts="Space ArrowUp W">
+              <span class="jump-icon" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </section>
+      <p class="rotate-note">For the roomiest districts, turn your device sideways.</p>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

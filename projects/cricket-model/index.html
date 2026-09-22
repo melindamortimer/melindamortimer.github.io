@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cricket Model — Melinda Mortimer</title>
+    <meta
+      name="description"
+      content="A cricket data archive and modelling workbench combining traceable ingestion, a FastAPI backend, a React interface and time-aware model evaluation."
+    />
+    <link
+      rel="canonical"
+      href="https://melindamortimer.github.io/projects/cricket-model/"
+    />
+    <link rel="stylesheet" href="../../assets/site.css?v=20260923b" />
+    <link rel="icon" href="../../assets/favicon.svg" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="wordmark" href="../../">Melinda Mortimer</a
+      ><a href="../../#work">Back to selected work</a>
+    </header>
+    <main id="main" class="wrap document">
+      <p class="mono">
+        Data engineering / Machine learning / Product development
+      </p>
+      <h1>Cricket Model</h1>
+      <p>
+        A cricket archive and modelling workbench that connects raw sports data
+        to inspectable predictions. The project brings together ingestion, data
+        quality, an API, a research workflow and a browser interface.
+      </p>
+      <p class="tech mono">Python / FastAPI / React / SQLite</p>
+      <img
+        class="case-study-image"
+        src="../../images/project-cricket.jpg"
+        width="1440"
+        height="900"
+        alt="The Cricket Archive interface, showing match data and navigation for competitions, players, coverage and the model lab."
+      />
+      <p class="case-study-caption">
+        The local application, captured in September 2026. This page is a
+        project walkthrough; the database-backed research app runs locally.
+      </p>
+      <h2>Start with data you can trace</h2>
+      <p>
+        Match results, scorecards and ball-by-ball feeds arrive with different
+        identifiers and levels of completeness. The archive maps these into
+        canonical competitions, seasons, matches and players, while preserving
+        source evidence and coverage information.
+      </p>
+      <p>
+        Content-addressed source artifacts retain the original inputs.
+        Incremental ingestion can resume after interruption, and identity checks
+        help prevent players with shared names from being merged. These
+        foundations make a prediction easier to investigate when its inputs look
+        wrong.
+      </p>
+      <h2>Make the archive useful</h2>
+      <p>
+        A FastAPI backend serves the normalized SQLite archive to a React
+        interface. Visitors to the local app can explore competitions, matches,
+        scorecards and player careers, then inspect coverage and operational
+        status. Data quality is visible alongside the data itself.
+      </p>
+      <h2>Evaluate against time and a baseline</h2>
+      <p>
+        The research workflow compares a logistic model with an Elo baseline and
+        market-implied probabilities. Expanding-year evaluation and explicit
+        training cutoffs keep the ordering of past results and future
+        predictions visible.
+      </p>
+      <p>
+        Versioned model artifacts, saved feature snapshots and decision records
+        connect each prediction to the data and configuration that produced it.
+        Calibration, uncertainty and unsuccessful experiments are part of the
+        evaluation, rather than reporting only the best result.
+      </p>
+      <h2>Separate research from prospective evidence</h2>
+      <p>
+        A paper-tracking workflow records simulated decisions and settles them
+        against subsequent results. It preserves timestamps, exclusion reasons
+        and revisions, and never places real bets. The initial retrospective
+        evaluation did not establish a profitable edge; prospective results
+        remain a research question.
+      </p>
+      <h2>What this project demonstrates</h2>
+      <p>
+        End-to-end ownership across data pipelines, entity resolution, backend
+        design, frontend delivery and model evaluation. The central engineering
+        challenge is making the path from source data to model output
+        reproducible and inspectable.
+      </p>
+      <p>
+        <a href="https://www.linkedin.com/in/melinda-mortimer-502a8795/"
+          >Get in touch to discuss the project</a
+        >
+        · <a href="../../#work">Explore more work</a>
+      </p>
+    </main>
+  </body>
+</html>

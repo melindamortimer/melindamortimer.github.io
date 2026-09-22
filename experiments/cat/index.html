@@ -8,7 +8,7 @@
       name="description"
       content="Source snapshots and context for two iterations of an AI-assisted cat game."
     />
-    <link rel="stylesheet" href="../../assets/site.css?v=20260923" />
+    <link rel="stylesheet" href="../../assets/site.css?v=20260923b" />
     <link rel="icon" href="../../assets/favicon.svg" />
   </head>
   <body>
@@ -20,14 +20,14 @@
       <h1>About the cat game archive</h1>
       <p>
         This experiment puts two historical builds back in the browser. The
-        original project began as a movement and jumping prototype, then changed
-        direction into a snake-style game.
+        first is a movement and jumping prototype; the latest is a complete,
+        illustrated platformer called Miso’s Moonlight Run.
       </p>
       <h2>Two source snapshots</h2>
       <ul>
         <li>
-          <strong>May 19, 2025:</strong> movement, jumping and eight selectable
-          cats.
+          <strong>May 2025 · Gemini:</strong> movement, jumping and eight
+          selectable cats.
           <a
             href="https://github.com/melindamortimer/cat-platformer/tree/fb041d644ee6827bde232105527248eccbf3924a"
             >Commit fb041d6</a
@@ -35,21 +35,22 @@
           · <a href="archive/2025-05/">Play original</a>.
         </li>
         <li>
-          <strong>June 29, 2025:</strong> fish collection, scoring and a
-          following cat trail.
+          <strong>July 2026 · GPT 5.6 Sol:</strong> three illustrated districts,
+          wall jumps, pouncing, checkpoints, collectibles and animated artwork.
           <a
-            href="https://github.com/melindamortimer/cat-platformer/tree/023b2177c887e9cc27e7bd17a835ede38e068411"
-            >Commit 023b217</a
+            href="https://github.com/melindamortimer/cat-platformer/tree/0663c3c258b14fd7f7d7e23d83eaef4df7c92565"
+            >Commit 0663c3c</a
           >
-          · <a href="archive/2025-06/">Play original</a>.
+          · <a href="archive/2026-07/">Play original</a>.
         </li>
       </ul>
       <h2>What the comparison can tell you</h2>
       <p>
         The project author identifies the initial version as Gemini-assisted and
-        the later iteration as ChatGPT-assisted. Dates are the Git commit dates,
-        not model release dates. Exact model versions, prompts and generation
-        time were not recorded with these snapshots.
+        the latest as built with ChatGPT using GPT 5.6 Sol in July 2026. The
+        labels show when the work was done, not when it was pushed. The first
+        commit is dated May 19, 2025; the latest snapshot is dated July 21,
+        2026. The exact Gemini version was not recorded.
       </p>
       <p>
         This is an example of iterative development with AI, not a controlled
@@ -62,19 +63,25 @@
       <p>
         Each archive directory contains the original HTML, CSS, JavaScript and
         images from its source commit. Original game behaviour and limitations
-        are retained, including the May movement sandbox and the June build’s
-        lack of a collision-based game-over state.
+        are retained, including the May movement sandbox. Only assets needed to
+        run the July game are included; production experiments and test
+        artifacts remain in the source repository.
       </p>
       <p>
         The embedded viewer uses a separate preview entry point and bridge
         script to add responsive scaling, accessible selector labels, touch
-        input and keyboard focus handling. It does not rewrite the game logic.
-        Switching builds and stopping or restarting a game resets that session.
+        input and keyboard focus handling to the May build. July uses its own
+        responsive interface and controls. Game logic is unchanged. Switching
+        builds or restarting reloads the game; July’s saved progress and
+        settings remain in this browser. Runtime assets load only after choosing
+        Play.
       </p>
       <p>
-        Keyboard: click Play, then use the arrow keys; Space jumps in the May
-        build. Escape moves focus to the viewer’s Stop &amp; reset button. The
-        on-screen controls support touch and keyboard activation.
+        May: use Left/Right to move and Space to jump. Escape moves focus to
+        Stop &amp; reset. July: A/D or arrows to move, Space/W/Up to jump,
+        Shift/X to pounce, Escape/P to pause, and Shift+Escape to return focus
+        to the viewer. July includes its own touch controls; landscape gives
+        more room.
       </p>
       <p>
         <a href="../../#ai-experiment">Return to the playable comparison</a>

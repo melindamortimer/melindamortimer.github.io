@@ -388,6 +388,25 @@ h1 span {
   transform-origin: top left;
   background: #f0f0f0;
 }
+.game-stage.modern-game {
+  background: #050d1d;
+}
+.game-stage.modern-game iframe {
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.case-study-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-block: 28px 12px;
+}
+.document .case-study-caption {
+  font-size: 12px;
+}
 .preview-action {
   position: absolute;
   inset: 0;
