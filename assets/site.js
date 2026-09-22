@@ -3,16 +3,16 @@
   const builds = {
     may: {
       directory: "2025-05",
-      title: "Gemini Â· May 2025 movement prototype",
-      date: "May 19, 2025 Â· Movement prototype",
-      instructions: "Arrow keys to move Â· Space to jump",
+      title: "Gemini · May 2025 movement prototype",
+      date: "May 19, 2025 · Movement prototype",
+      instructions: "Arrow keys to move · Space to jump",
       alt: "May 2025 prototype: cat selector above a pale blue movement area.",
     },
     june: {
       directory: "2025-06",
-      title: "ChatGPT Â· June 2025 cat-snake iteration",
-      date: "June 29, 2025 Â· Cat-snake iteration",
-      instructions: "Arrow keys to steer Â· Collect fish to grow your trail",
+      title: "ChatGPT · June 2025 cat-snake iteration",
+      date: "June 29, 2025 · Cat-snake iteration",
+      instructions: "Arrow keys to steer · Collect fish to grow your trail",
       alt: "June 2025 iteration: cat selector, score and fish collection area.",
     },
   };
@@ -69,7 +69,7 @@
     get("game-preview").hidden = true;
     get("preview-action").hidden = true;
     get("stop-game").hidden = false;
-    get("build-status").textContent = "Loading archived buildâ€¦";
+    get("build-status").textContent = "Loading archived build…";
     stage.append(frame);
     scale();
     readyTimer = setTimeout(() => {
@@ -152,7 +152,7 @@
       clearTimeout(readyTimer);
       get("restart").disabled = false;
       get("touch-controls").hidden = false;
-      get("build-status").textContent = `Playing Â· ${builds[selected].date}`;
+      get("build-status").textContent = `Playing · ${builds[selected].date}`;
       if (frame.dataset.focusOnReady === "true")
         frame.focus({ preventScroll: true });
     }
