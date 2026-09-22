@@ -1,145 +1,443 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Melinda Mortimer</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "surface": "#0b1326",
-            "surface-container": "#171f33",
-            "surface-container-low": "#131b2e",
-            "surface-container-high": "#222a3d",
-            "surface-container-highest": "#2d3449",
-            "surface-container-lowest": "#060e20",
-            "surface-bright": "#31394d",
-            "primary": "#c0c1ff",
-            "primary-container": "#8083ff",
-            "on-primary": "#1000a9",
-            "on-surface": "#dae2fd",
-            "on-surface-variant": "#c7c4d7",
-            "secondary": "#4cd7f6",
-            "outline": "#908fa0",
-            "outline-variant": "#464554",
-            "background": "#0b1326"
-          },
-          fontFamily: {
-            "headline": ["Space Grotesk"],
-            "body": ["Inter"],
-            "mono": ["JetBrains Mono"]
-          },
-          borderRadius: {
-            "DEFAULT": "0.125rem",
-            "lg": "0.25rem",
-            "xl": "0.5rem",
-            "full": "0.75rem"
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    .glass-nav {
-      background: rgba(11, 19, 38, 0.7);
-      backdrop-filter: blur(20px);
-    }
-    .text-gradient {
-      background: linear-gradient(135deg, #c0c1ff 0%, #8083ff 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    body {
-      background-color: #0b1326;
-      color: #dae2fd;
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
-</head>
-<body class="selection:bg-primary-container selection:text-on-primary-container">
-<!-- Nav -->
-<nav class="fixed top-0 w-full z-50 glass-nav">
-  <div class="flex justify-between items-center max-w-7xl mx-auto px-8 py-6">
-    <div class="text-xl font-bold tracking-tighter text-on-surface font-headline">MELINDA MORTIMER</div>
-    <div class="hidden md:flex items-center gap-10">
-      <a class="text-on-surface/60 hover:text-secondary transition-colors font-headline uppercase tracking-widest text-sm" href="https://github.com/melindamortimer" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a class="text-on-surface/60 hover:text-secondary transition-colors font-headline uppercase tracking-widest text-sm" href="https://www.linkedin.com/in/melinda-mortimer-502a8795/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-    </div>
-  </div>
-</nav>
-<!-- Projects -->
-<main class="pt-28">
-  <section class="bg-surface-container-low py-24">
-    <div class="max-w-7xl mx-auto px-8">
-      <div class="flex flex-col md:flex-row justify-between items-baseline mb-16 gap-4">
-        <h2 class="text-4xl font-headline font-bold uppercase tracking-tight">Featured Projects</h2>
-        <a class="flex items-center gap-2 text-secondary hover:text-primary transition-colors font-mono text-xs uppercase tracking-widest" href="https://github.com/melindamortimer" target="_blank" rel="noopener noreferrer">
-          Follow on GitHub &#8599;
-        </a>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-
-        <!-- Rubik's Timer (8 cols, with image) -->
-        <a href="https://rubikstimer.io/" target="_blank" rel="noopener noreferrer" class="md:col-span-8 group relative overflow-hidden rounded-xl bg-surface-container hover:bg-surface-container-highest transition-all duration-500 block">
-          <div class="aspect-[16/9] w-full overflow-hidden">
-            <img class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-700 scale-105 group-hover:scale-100" src="images/back-rubix.png" alt="Rubik's Timer app screenshot">
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101b22" />
+    <title>Melinda Mortimer — Data, AI & interactive software</title>
+    <meta
+      name="description"
+      content="Explore Melinda Mortimer’s projects: reusable machine learning pipelines, live web apps, MRI research and a playable archive of AI-assisted game development."
+    />
+    <meta
+      property="og:title"
+      content="Melinda Mortimer — From data to something you can use."
+    />
+    <meta
+      property="og:description"
+      content="Models, tools and interactive experiences. Explore the projects and play through two moments in AI-assisted development."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://melindamortimer.github.io/" />
+    <meta
+      property="og:image"
+      content="https://melindamortimer.github.io/images/project-rubiks.jpg"
+    />
+    <link rel="canonical" href="https://melindamortimer.github.io/" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/site.css" />
+    <script src="assets/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <svg
+      class="icon-definitions"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <symbol id="arrow" viewBox="0 0 24 24">
+        <path d="M4 12h15m-6-6 6 6-6 6" />
+      </symbol>
+      <symbol id="external" viewBox="0 0 24 24">
+        <path d="M6 18 18 6M6 6h12v12" />
+      </symbol>
+    </svg>
+    <header class="site-header wrap">
+      <a class="wordmark" href="./">Melinda Mortimer</a>
+      <nav aria-label="Main navigation">
+        <a href="#work">Work</a><a href="#ai-experiment">AI experiments</a
+        ><a href="https://github.com/melindamortimer">GitHub</a
+        ><a href="https://www.linkedin.com/in/melinda-mortimer-502a8795/"
+          >LinkedIn</a
+        >
+      </nav>
+    </header>
+    <main id="main">
+      <section class="hero wrap" aria-labelledby="intro-title">
+        <h1 id="intro-title">
+          From data to<br />something<br /><span>you can use.</span>
+        </h1>
+        <div class="hero-copy">
+          <p>
+            I build models, tools and interactive experiences — and explore how
+            AI can help turn ideas into working software.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#work"
+              >Explore my work
+              <svg class="icon" aria-hidden="true">
+                <use href="#arrow" /></svg></a
+            ><a class="button" href="#ai-experiment">Try the AI comparison</a>
           </div>
-          <div class="p-8">
-            <h3 class="text-3xl font-headline font-bold mb-4 text-on-surface">Rubik's Timer</h3>
-            <p class="text-on-surface-variant max-w-lg font-body">A speedcubing timer with scramble generation, session tracking, and solve statistics.</p>
+        </div>
+      </section>
+      <section id="work" class="wrap work" aria-labelledby="work-title">
+        <div class="section-heading">
+          <h2 id="work-title">Selected work</h2>
+          <p class="mono">Models, products &amp; practical experiments</p>
+        </div>
+        <article class="project">
+          <a
+            class="project-image"
+            href="https://github.com/melindamortimer/ds-model-template"
+            tabindex="-1"
+            aria-hidden="true"
+            ><img
+              src="images/back-ds-template.png"
+              width="2348"
+              height="1172"
+              alt=""
+              fetchpriority="high"
+          /></a>
+          <div class="project-copy">
+            <span class="project-number mono">01</span>
+            <h3>DS Model Template</h3>
+            <p class="project-lead">
+              A reusable path from tabular data to deployed predictions.
+            </p>
+            <p class="project-detail">
+              Compare regression and boosting models, track experiments with
+              MLflow, explain predictions with SHAP, and serve results through a
+              Databricks app.
+            </p>
+            <p class="tech mono">Python / Databricks / MLflow</p>
+            <a
+              class="text-link"
+              href="https://github.com/melindamortimer/ds-model-template"
+              >Explore the code
+              <svg class="icon" aria-hidden="true"><use href="#arrow" /></svg
+            ></a>
           </div>
-        </a>
-
-        <!-- CentrePass.io (4 cols, with image at bottom) -->
-        <a href="https://www.centrepass.io" target="_blank" rel="noopener noreferrer" class="md:col-span-4 group rounded-xl bg-surface-container flex flex-col hover:bg-surface-container-highest transition-all duration-500">
-          <div class="p-8 flex-grow">
-            <h3 class="text-2xl font-headline font-bold mb-4 text-on-surface">CentrePass.io</h3>
-            <p class="text-on-surface-variant text-sm leading-relaxed font-body">Netball fixtures, results, and player statistics all in one place.</p>
+        </article>
+        <article class="project">
+          <a
+            class="project-image"
+            href="https://rubikstimer.io/"
+            tabindex="-1"
+            aria-hidden="true"
+            ><img
+              src="images/project-rubiks.jpg"
+              width="1265"
+              height="712"
+              alt=""
+              loading="lazy"
+          /></a>
+          <div class="project-copy">
+            <span class="project-number mono">02</span>
+            <h3>Rubik’s Timer</h3>
+            <p class="project-lead">
+              A practice tool built around the details that matter.
+            </p>
+            <p class="project-detail">
+              Scramble generation, session tracking and solve statistics, with
+              an interactive cube and live or asynchronous two-player sessions.
+            </p>
+            <p class="tech mono">JavaScript / Supabase / Interactive 3D</p>
+            <a class="text-link" href="https://rubikstimer.io/"
+              >Open live app
+              <svg class="icon" aria-hidden="true"><use href="#external" /></svg
+            ></a>
           </div>
-          <div class="aspect-square w-full rounded-b-xl overflow-hidden mt-auto">
-            <img class="w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-all duration-700 scale-[1.03] group-hover:scale-100" src="images/back-centrepass.png" alt="CentrePass.io app screenshot">
+        </article>
+        <article class="project">
+          <a
+            class="project-image"
+            href="https://www.centrepass.io/"
+            tabindex="-1"
+            aria-hidden="true"
+            ><img
+              src="images/project-centrepass.jpg"
+              width="1265"
+              height="712"
+              alt=""
+              loading="lazy"
+          /></a>
+          <div class="project-copy">
+            <span class="project-number mono">03</span>
+            <h3>CentrePass</h3>
+            <p class="project-lead">
+              Netball fixtures, results and player statistics, brought together.
+            </p>
+            <p class="project-detail">
+              A dedicated web application for exploring the sport, with match
+              information and player data in one place.
+            </p>
+            <p class="tech mono">Sports data / Web application</p>
+            <a class="text-link" href="https://www.centrepass.io/"
+              >Open live app
+              <svg class="icon" aria-hidden="true"><use href="#external" /></svg
+            ></a>
           </div>
-        </a>
-
-        <!-- Pokemon Team Battle (6 cols, with small image) -->
-        <a href="pokemon-team-builder/index.html" class="md:col-span-6 group rounded-xl bg-surface-container hover:bg-surface-container-highest transition-all duration-500 overflow-hidden block">
-          <div class="p-8 md:min-h-[140px]">
-            <h3 class="text-2xl font-headline font-bold mb-4 text-on-surface">Pokemon Team Battle</h3>
-            <p class="text-on-surface-variant text-sm font-body">Build and rank two Pokemon teams based on their total stats.</p>
+        </article>
+      </section>
+      <section
+        id="ai-experiment"
+        class="experiment-band"
+        aria-labelledby="experiment-title"
+      >
+        <div class="wrap">
+          <div class="experiment-heading">
+            <div>
+              <p class="mono section-label">AI-assisted development / 2025</p>
+              <h2 id="experiment-title">One cat.<br />Two moments in AI.</h2>
+            </div>
+            <p>
+              A playable archive of an early Gemini prototype and a later
+              ChatGPT iteration. Switch builds and see what changed.
+            </p>
           </div>
-          <div class="aspect-[5/2] w-full overflow-hidden">
-            <img class="w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-all duration-700 scale-[1.03] group-hover:scale-100" src="images/back-pokemon.png" alt="Pokemon Team Battle screenshot">
+          <div class="comparison" data-comparison>
+            <div class="comparison-toolbar">
+              <div
+                class="build-tabs"
+                role="tablist"
+                aria-label="Choose an archived game build"
+              >
+                <button
+                  id="tab-may"
+                  type="button"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="game-panel"
+                  data-build="may"
+                >
+                  Gemini <span>May 2025</span></button
+                ><button
+                  id="tab-june"
+                  type="button"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="game-panel"
+                  tabindex="-1"
+                  data-build="june"
+                >
+                  ChatGPT <span>June 2025</span>
+                </button>
+              </div>
+              <div class="archive-actions">
+                <button
+                  class="button small"
+                  type="button"
+                  id="restart"
+                  disabled
+                >
+                  Restart</button
+                ><a
+                  class="button small"
+                  id="original-link"
+                  href="experiments/cat/archive/2025-05/index.html"
+                  target="_blank"
+                  rel="noopener"
+                  >Open original
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#external" /></svg
+                ></a>
+              </div>
+            </div>
+            <div id="game-panel" role="tabpanel" aria-labelledby="tab-may">
+              <div class="game-stage" id="game-stage">
+                <img
+                  id="game-preview"
+                  src="images/cat-may.jpg"
+                  width="840"
+                  height="560"
+                  alt="May 2025 prototype: cat selector above a pale blue movement area."
+                />
+                <div class="preview-action" id="preview-action">
+                  <button class="button primary" type="button" id="start-game">
+                    Play this build
+                    <svg class="icon" aria-hidden="true">
+                      <use href="#arrow" />
+                    </svg></button
+                  ><span>Original gameplay, preserved</span>
+                </div>
+              </div>
+              <div class="game-footer">
+                <p id="game-instructions">Arrow keys to move · Space to jump</p>
+                <button
+                  class="button small"
+                  id="stop-game"
+                  type="button"
+                  hidden
+                >
+                  Stop &amp; reset
+                </button>
+                <p class="mono" id="build-status" role="status">
+                  May 19, 2025 · Movement prototype
+                </p>
+              </div>
+              <div
+                class="touch-controls"
+                id="touch-controls"
+                hidden
+                aria-label="Game controls"
+              >
+                <button
+                  type="button"
+                  data-key="ArrowLeft"
+                  aria-label="Move left"
+                >
+                  ←</button
+                ><button type="button" data-key="ArrowUp" aria-label="Move up">
+                  ↑</button
+                ><button
+                  type="button"
+                  data-key="ArrowDown"
+                  aria-label="Move down"
+                >
+                  ↓</button
+                ><button
+                  type="button"
+                  data-key="ArrowRight"
+                  aria-label="Move right"
+                >
+                  →</button
+                ><button type="button" data-key="Space" id="jump-key">
+                  Jump</button
+                ><span
+                  >Touch controls · Keyboard also supported · Esc to leave
+                  game</span
+                >
+              </div>
+            </div>
+            <noscript
+              ><p class="no-script">
+                JavaScript enables the embedded comparison. Play the
+                <a href="experiments/cat/archive/2025-05/index.html"
+                  >May prototype</a
+                >
+                or the
+                <a href="experiments/cat/archive/2025-06/index.html"
+                  >June iteration</a
+                >
+                directly.
+              </p></noscript
+            >
           </div>
-        </a>
-
-        <!-- DS Model Template (6 cols, with small image) -->
-        <a href="https://github.com/melindamortimer/ds-model-template" target="_blank" rel="noopener noreferrer" class="md:col-span-6 group rounded-xl bg-surface-container hover:bg-surface-container-highest transition-all duration-500 overflow-hidden block">
-          <div class="p-8 md:min-h-[140px]">
-            <h3 class="text-2xl font-headline font-bold mb-4 text-on-surface">DS Model Template</h3>
-            <p class="text-on-surface-variant text-sm font-body">A reusable template for data science model development, packaging, and deployment.</p>
+          <div class="comparison-notes">
+            <article>
+              <p class="mono">01 / Gemini · May 19, 2025</p>
+              <h3>The prototype</h3>
+              <p>
+                Animated sprites, eight cat choices, horizontal movement and
+                jumping. A small, working starting point for learning through
+                iteration.
+              </p>
+              <p class="limitation">
+                Still a movement sandbox: no levels, objectives or scoring.
+              </p>
+              <a
+                class="text-link small-link"
+                href="https://github.com/melindamortimer/cat-platformer/tree/fb041d644ee6827bde232105527248eccbf3924a"
+                >Inspect this snapshot
+                <svg class="icon" aria-hidden="true">
+                  <use href="#external" /></svg
+              ></a>
+            </article>
+            <article>
+              <p class="mono">02 / ChatGPT · June 29, 2025</p>
+              <h3>The iteration</h3>
+              <p>
+                A change of direction into a snake-style game: collect fish,
+                increase your score, and grow a trail of cats with queued,
+                grid-aligned turns.
+              </p>
+              <p class="limitation">
+                Still experimental: no wall or self-collision game-over state.
+              </p>
+              <a
+                class="text-link small-link"
+                href="https://github.com/melindamortimer/cat-platformer/tree/023b2177c887e9cc27e7bd17a835ede38e068411"
+                >Inspect this snapshot
+                <svg class="icon" aria-hidden="true">
+                  <use href="#external" /></svg
+              ></a>
+            </article>
           </div>
-          <div class="aspect-[5/2] w-full overflow-hidden">
-            <img class="w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-all duration-700 scale-[1.03] group-hover:scale-100" src="images/back-ds-template.png" alt="DS Model Template screenshot">
+          <p class="archive-note">
+            An exploration of my process, not a controlled model benchmark.
+            Different briefs and iterations also shape the result. Dates come
+            from Git history; AI tools are attributed by the project author. The
+            archive preserves the original code; this viewer adds scaling, touch
+            controls and keyboard focus handling.
+            <a href="experiments/cat/">About the archive</a>
+          </p>
+        </div>
+      </section>
+      <section class="wrap more-work" aria-labelledby="more-title">
+        <div class="section-heading">
+          <h2 id="more-title">More to explore</h2>
+          <p>Research, playful interfaces &amp; useful tools</p>
+        </div>
+        <article class="project-row">
+          <span class="mono project-number">04</span>
+          <h3>Pokémon Team Battle</h3>
+          <div>
+            <p>
+              Team building, image-based input, battle history and an arcade
+              mode.
+            </p>
+            <p class="mono">JavaScript / OCR / Interactive UI</p>
           </div>
-        </a>
-
-      </div>
-    </div>
-  </section>
-</main>
-<!-- Footer -->
-<footer class="w-full border-t border-outline-variant/15 bg-surface">
-  <div class="flex justify-center items-center px-8 py-12 gap-10 max-w-7xl mx-auto">
-    <a class="font-mono text-[10px] uppercase tracking-widest text-on-surface-variant/40 hover:text-secondary transition-colors" href="https://github.com/melindamortimer" target="_blank" rel="noopener noreferrer">GitHub</a>
-    <a class="font-mono text-[10px] uppercase tracking-widest text-on-surface-variant/40 hover:text-secondary transition-colors" href="https://www.linkedin.com/in/melinda-mortimer-502a8795/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-  </div>
-</footer>
-</body>
+          <a class="text-link" href="pokemon-team-builder/"
+            >Try the demo
+            <svg class="icon" aria-hidden="true"><use href="#arrow" /></svg
+          ></a>
+        </article>
+        <article class="project-row">
+          <span class="mono project-number">05</span>
+          <h3>MRI classification research</h3>
+          <div>
+            <p>
+              An earlier research project exploring convolutional neural
+              networks for identifying lacunes in MRI.
+            </p>
+            <p class="mono">R / CNNs / Research · 2018</p>
+          </div>
+          <a
+            class="text-link"
+            href="https://github.com/melindamortimer/lacune-pvs-cnn"
+            >Research code
+            <svg class="icon" aria-hidden="true"><use href="#external" /></svg
+          ></a>
+        </article>
+        <article class="project-row">
+          <span class="mono project-number">06</span>
+          <h3>Inspirational screensaver</h3>
+          <div>
+            <p>
+              A small Python desktop project exploring a configurable, visual
+              everyday utility.
+            </p>
+            <p class="mono">Python / Tkinter / Desktop</p>
+          </div>
+          <a
+            class="text-link"
+            href="https://github.com/melindamortimer/inspirational-screensaver"
+            >Explore the code
+            <svg class="icon" aria-hidden="true"><use href="#external" /></svg
+          ></a>
+        </article>
+      </section>
+      <section class="contact wrap" aria-labelledby="contact-title">
+        <h2 id="contact-title">Curious about the work?<br />Let’s talk.</h2>
+        <div class="actions">
+          <a
+            class="button primary"
+            href="https://www.linkedin.com/in/melinda-mortimer-502a8795/"
+            >LinkedIn
+            <svg class="icon" aria-hidden="true">
+              <use href="#external" /></svg></a
+          ><a class="text-link" href="https://github.com/melindamortimer"
+            >GitHub
+            <svg class="icon" aria-hidden="true"><use href="#external" /></svg
+          ></a>
+        </div>
+      </section>
+    </main>
+    <footer class="wrap site-footer">
+      <span>Melinda Mortimer</span
+      ><span class="mono">Built, tested, iterated.</span>
+    </footer>
+  </body>
 </html>

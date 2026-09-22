@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cat game archive — Melinda Mortimer</title>
+    <meta
+      name="description"
+      content="Source snapshots and context for two iterations of an AI-assisted cat game."
+    />
+    <link rel="stylesheet" href="../../assets/site.css" />
+    <link rel="icon" href="../../assets/favicon.svg" />
+  </head>
+  <body>
+    <header class="site-header wrap">
+      <a class="wordmark" href="../../">Melinda Mortimer</a
+      ><a href="../../#ai-experiment">Back to comparison</a>
+    </header>
+    <main class="wrap document">
+      <h1>About the cat game archive</h1>
+      <p>
+        This experiment puts two historical builds back in the browser. The
+        original project began as a movement and jumping prototype, then changed
+        direction into a snake-style game.
+      </p>
+      <h2>Two source snapshots</h2>
+      <ul>
+        <li>
+          <strong>May 19, 2025:</strong> movement, jumping and eight selectable
+          cats.
+          <a
+            href="https://github.com/melindamortimer/cat-platformer/tree/fb041d644ee6827bde232105527248eccbf3924a"
+            >Commit fb041d6</a
+          >
+          · <a href="archive/2025-05/">Play original</a>.
+        </li>
+        <li>
+          <strong>June 29, 2025:</strong> fish collection, scoring and a
+          following cat trail.
+          <a
+            href="https://github.com/melindamortimer/cat-platformer/tree/023b2177c887e9cc27e7bd17a835ede38e068411"
+            >Commit 023b217</a
+          >
+          · <a href="archive/2025-06/">Play original</a>.
+        </li>
+      </ul>
+      <h2>What the comparison can tell you</h2>
+      <p>
+        The project author identifies the initial version as Gemini-assisted and
+        the later iteration as ChatGPT-assisted. Dates are the Git commit dates,
+        not model release dates. Exact model versions, prompts and generation
+        time were not recorded with these snapshots.
+      </p>
+      <p>
+        This is an example of iterative development with AI, not a controlled
+        measurement of model capability. The brief, gameplay and amount of
+        iteration changed. Compare the interactions and implementation choices
+        rather than treating one build as proof that one model is universally
+        better.
+      </p>
+      <h2>What is preserved</h2>
+      <p>
+        Each archive directory contains the original HTML, CSS, JavaScript and
+        images from its source commit. Original game behaviour and limitations
+        are retained, including the May movement sandbox and the June build’s
+        lack of a collision-based game-over state.
+      </p>
+      <p>
+        The embedded viewer uses a separate preview entry point and bridge
+        script to add responsive scaling, accessible selector labels, touch
+        input and keyboard focus handling. It does not rewrite the game logic.
+        Switching builds and stopping or restarting a game resets that session.
+      </p>
+      <p>
+        Keyboard: click Play, then use the arrow keys; Space jumps in the May
+        build. Escape moves focus to the viewer’s Stop &amp; reset button. The
+        on-screen controls support touch and keyboard activation.
+      </p>
+      <p>
+        <a href="../../#ai-experiment">Return to the playable comparison</a>
+      </p>
+    </main>
+  </body>
+</html>

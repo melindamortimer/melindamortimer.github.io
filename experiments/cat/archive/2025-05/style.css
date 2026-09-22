@@ -1,0 +1,66 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    font-family: sans-serif;
+  }
+  
+  #game-area {
+    position: relative;
+    width: 800px;
+    height: 400px;
+    background-color: #cceeff;
+    overflow: hidden;
+    border: 2px solid #333;
+  }
+  
+  #character {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background-image: url('images/cat_sprite_sheet.png');
+    background-repeat: no-repeat;
+    background-size: auto;
+    bottom: 0;
+    left: 100px;
+    transition: transform 0.1s;
+  }
+  
+  .flipped {
+    transform: scaleX(-1);
+  }
+
+  #selector-box {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 2px solid #333;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+  }
+
+  #preview {
+    width: 32px;
+    height: 32px;
+    background-image: url('images/cat_sprite_sheet.png');
+    background-repeat: no-repeat;
+    background-size: auto;
+    border: 0px solid transparent;
+  }
+  
+  #preview.active-left {
+    border-color: blue;
+  }
+  
+  #preview.active-right {
+    border-color: green;
+  }
+  
