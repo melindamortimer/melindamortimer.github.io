@@ -38,3 +38,5 @@ Run `node --check assets/site.js` and `node --check experiments/cat/bridge.js`.
 Check desktop and narrow mobile layouts, tab keyboard navigation, Play, switching while playing, Restart, Stop, Escape, and touch controls. Test original archive URLs independently. The archived games intentionally retain historical limitations.
 
 Font: Inter by the Inter Project Authors, SIL Open Font License; see `assets/Inter-LICENSE.txt`.
+
+When changing shared CSS or JavaScript, bump the `v` query in the HTML asset URLs so returning visitors receive the new version immediately.
